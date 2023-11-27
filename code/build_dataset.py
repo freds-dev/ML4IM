@@ -9,7 +9,33 @@ from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
 import cv2
 from pathlib import Path
 
-def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):    
+def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):
+    """
+    Builds a dataset for training a machine learning model using video data.
+
+    Args:
+        video_dir_name (str): Path to the directory containing video files.
+            Constraints: Must be a valid path. Raises FileNotFoundError if the specified directory does not exist.
+
+        dataset_dir_name (str): Path for the output dataset directory.
+            Constraints: Must be a valid path for the output dataset directory. It should not already exist.
+            Raises an Exception if the dataset directory already exists.
+
+        amount_videos (int): Number of videos to include in the dataset.
+            Constraints: Must be a positive integer.
+            Raises an Exception if the requested number of videos is greater than the actual number of labeled videos.
+
+        frames_per_video (int): Number of frames to include per video.
+            Constraints: Must be a positive integer.
+
+    Returns:
+        None
+
+    Raises:
+        FileNotFoundError: If the specified video directory does not exist.
+        Exception: If the dataset directory already exists or if the requested number of videos is greater than the actual number of labeled videos.
+
+    """    
     dataset_dir = get_dataset_dir(dataset_dir_name)
     if os.path.exists(dataset_dir):
         raise Exception(f"The dataset directory \"{dataset_dir}\" is already existent and therefore not useable. HINT: Choose another dataset_dir_name")
