@@ -11,8 +11,6 @@ from pathlib import Path
 
 def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):
     """
-    Builds a dataset for training a machine learning model using video data.
-
     Args:
         video_dir_name (str): Path to the directory containing video files.
             Constraints: Must be a valid path. Raises FileNotFoundError if the specified directory does not exist.
@@ -61,7 +59,6 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     create_directory(os.path.join(dataset_dir, "train"))
     create_directory(os.path.join(dataset_dir, "val"))
     create_directory(os.path.join(dataset_dir, "test"))
-    
     
     # Copy input into data.yaml
     write_dataset_yaml(dataset_dir)

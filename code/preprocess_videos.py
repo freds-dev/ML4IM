@@ -50,8 +50,6 @@ def preprocess_videos(txt_file, preprocessing_function_module, output_directory)
     for video_path in video_paths:
         getattr(module, function_name)(video_path, output_directory)
 
-
-
 def main():
     parser = argparse.ArgumentParser(description='Process videos.')
     parser.add_argument('-source', required=True, help='Path to the source videos folder')
