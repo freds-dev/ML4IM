@@ -94,7 +94,6 @@ def labelbox_bb_to_yolo(dict, width, height):
     
     return BoundingBox(center_x,center_y,width_bb,height_bb)
 
-
 def convert_to_coco_format(json_data) -> [AnnotationsVideo]:
     width, height = json_data["media_attributes"]["width"],json_data["media_attributes"]["height"]
     frames = json_data["projects"]['clor41l0i03gi07znfo8051e3']["labels"][0]["annotations"]["frames"]
@@ -131,14 +130,12 @@ def pick_n_random_items(input_list, n):
     # Return a tuple containing the picked items and non-picked items
     return picked_items, non_picked_items
 
-
 def write_data_row(data_row:dict,video_id:int,dataset_dir:str, video_base_dir:str, isTraining: bool = True):
     dir_name = "train" if isTraining else "val"
     video_id = adjust_string_length(str(video_id),3,"0")
     frames : [AnnotationsVideo] = convert_to_coco_format(data_row)        
     for frame in frames:
-        frame.save_to_file(f"{dataset_dir}/{dir_name}/labels/",video_id)
-    
+        frame.save_to_file(f"{dataset_dir}/{dir_name}/labels/",video_id)   
     
     video_location = get_video_location(video_base_dir, data_row)
     extract_frames(video_location,f"{dataset_dir}/{dir_name}/images",video_id)
@@ -165,7 +162,6 @@ if __name__ == "__main__":
     create_directory(os.path.join(dataset_dir, "train"))
     create_directory(os.path.join(dataset_dir, "val"))
     create_directory(os.path.join(dataset_dir, "test"))
-    
     
     # Copy input into data.yaml
     with open(os.path.join(dataset_dir,"data.yaml"),"w") as f:
