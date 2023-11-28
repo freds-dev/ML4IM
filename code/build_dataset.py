@@ -41,6 +41,7 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     
     data = read_ndjson(anotation_location)
     data = [d for d in data if video_is_labeled(d)]
+    data = [d for d in data if os.path.exists(get_video_location(video_dir,d))]
     print(f"{len(data)} videos are labeled")
     if len(data) < amount_videos:
         raise Exception(f"Requested amount of videos ({amount_videos}) is greater than actual labeled videos ({len(data)}). HINT: Decrease amount_videos")
