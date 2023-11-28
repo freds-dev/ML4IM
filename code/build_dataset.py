@@ -3,7 +3,7 @@ import argparse
 
 from utils.file_system import create_directory
 from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson
-from utils.labelbox_to_coco import video_is_labeled, write_data_row
+from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
 
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
 
@@ -51,7 +51,7 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     testing_data, data = pick_n_random_items(data,amount_test_videos)
     validation_data, data = pick_n_random_items(data,amount_validation_videos)
     data, _ = pick_n_random_items(data, amount_videos - (amount_validation_videos + amount_test_videos))
-     
+    
     # Create directory structure
     create_directory(dataset_dir)
     create_directory(os.path.join(dataset_dir, "train"))
