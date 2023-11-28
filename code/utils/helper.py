@@ -3,7 +3,7 @@ import json
 from random import sample 
 
 def percentage_floored(n:int, percentage: float)-> int:
-    return math.max(math.floor(n * percentage),1)
+    return max(math.floor(n * percentage),1)
 
 def adjust_string_length(input_str, length, fill_char):
     """
