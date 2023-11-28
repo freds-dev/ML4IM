@@ -6,8 +6,6 @@ from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson
 from utils.labelbox_to_coco import video_is_labeled, write_data_row
 
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
-import cv2
-from pathlib import Path
 
 def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):
     """

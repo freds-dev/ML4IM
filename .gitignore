@@ -1,4 +1,4 @@
 .env
-/videos
-/datasets
-
+/data
+**/__pycache__**
+.DS_Store
