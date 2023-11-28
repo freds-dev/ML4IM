@@ -2,3 +2,5 @@
 /data
 **/__pycache__**
 .DS_Store
+**/runs**
+**mp4_files.txt
