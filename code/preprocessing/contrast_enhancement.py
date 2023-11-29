@@ -1,7 +1,8 @@
 import cv2
 
-def bg_subtraction(video_path, output_path):
-    print("Performing background subtraction...")
+
+def contrast_enhancement(video_path, output_path):
+    print("Performing contrast enhancement...")
     print(f"Input video path: {video_path}")
     print(f"Output folder: {output_path}")
     cap = cv2.VideoCapture(video_path)
@@ -18,10 +19,8 @@ def bg_subtraction(video_path, output_path):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = int(cap.get(cv2.CAP_PROP_FPS))
-    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height), isColor=True)  # Set isColor=True
-
-    # Create a background subtractor
-    bg_subtractor = cv2.createBackgroundSubtractorMOG2()
+    out = cv2.VideoWriter(output_path, fourcc, fps,
+                          (width, height), isColor=True)  # Set isColor=True
 
     frame_count = 0
 
@@ -30,20 +29,24 @@ def bg_subtraction(video_path, output_path):
         if not ret:
             break
 
-        # Apply background subtraction
-        fg_mask = bg_subtractor.apply(frame)
+        # Convert frame to grayscale
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Apply histogram equalization to enhance contrast
+        enhanced_frame = cv2.equalizeHist(gray_frame)
 
         # Convert single-channel image to three-channel
-        fg_mask_colored = cv2.cvtColor(fg_mask, cv2.COLOR_GRAY2BGR)
+        enhanced_frame_colored = cv2.cvtColor(
+            enhanced_frame, cv2.COLOR_GRAY2BGR)
 
-        # Write the frame with the foreground mask to the output video
-        out.write(fg_mask_colored)
+        # Write the frame with contrast enhancement to the output video
+        out.write(enhanced_frame_colored)
 
         # Print the progress
         frame_count += 1
         print(f"Processing Frame {frame_count}/{total_frames}")
 
-    print("Background subtraction complete.")
+    print("Contrast enhancement complete.")
 
     cap.release()
     out.release()
