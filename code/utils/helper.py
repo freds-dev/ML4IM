@@ -1,6 +1,6 @@
 import math
 import json
-from random import sample 
+from random import sample, seed
 
 def percentage_floored(n:int, percentage: float)-> int:
     return max(math.floor(n * percentage),1)
@@ -32,6 +32,7 @@ def read_ndjson(path):
 
 
 def pick_n_random_items(input_list, n):
+    seed(0)
     # Ensure n is not greater than the length of the input list
     n = min(n, len(input_list))
 
