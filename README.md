@@ -101,7 +101,38 @@ options:
                   (e.g., module_name.function_name)
 
 ```
+#### Training a model
+```
+> python3 train.py -h
+usage: train.py [-h] -dataset DATASET [-epochs EPOCHS] [-batch BATCH]
+                [-save_period SAVE_PERIOD] [-name NAME]
+                [-model_path MODEL_PATH] [-device DEVICE] [-exist_ok] [-plots]
 
+Train YOLO model.
+
+options:
+  -h, --help            show this help message and exit
+  -dataset DATASET      Name of the dataset can be found as it is directory in
+                        your "data/datasets" directory.
+  -epochs EPOCHS        Number of training epochs (default: 100).
+  -batch BATCH          Batch size for training, -1 uses an automatic approach
+                        to define a well defined batch size(default: -1).
+  -save_period SAVE_PERIOD
+                        Save model checkpoints every N epochs (default: 10).
+  -name NAME            The name of the run. It will use the dataset as
+                        project and this name as name of the actual running
+                        experiment
+  -model_path MODEL_PATH
+                        Path to the YOLO model configuration file (default:
+                        yolov8n.yaml).
+  -device DEVICE        Device index for training (default: 0). Use arrays
+                        (e.g. [0,1] for multiple gpu usage and "cpu" for using
+                        cpu)
+  -exist_ok             Allow overwriting the project directory if it already
+                        exists.
+  -plots                Generate plots for each epoch(default: True).
+
+```
 | Function name            | Possible input channels       | Output channels             | Note                                                                             | Implementing process_bands functionality |
 | ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
 | `bg_subtraction`         | 1-3                           | 1 actual, three implemented |                                                                                  |               Yes                           |
