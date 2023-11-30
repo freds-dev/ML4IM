@@ -8,7 +8,19 @@ import numpy as np
 # Larger values of filter_size will result in smoother but slower responses to changes in the input video.
 
 
-def temporal_filtering(video_path, output_path, filter_size=5):
+def temporal_filtering(video_path, output_path,input_bands = -1,  output_bands = [True, True, True], filter_size=5):
+    print(f"input_bands = {input_bands}")
+    print(f"output_bands = {output_bands}")
+    
+    if input_bands not in [-1,0,1,2]:
+        raise Exception(f"Input bands must be in [-1,0,1,2] but is {input_bands}")
+
+
+    
+    if len(output_bands) != 3:
+        raise Exception("Length of output_bands must be 3!")
+
+
     print("Performing temporal filtering...")
     print(f"Input video path: {video_path}")
     print(f"Output folder: {output_path}")
@@ -40,8 +52,10 @@ def temporal_filtering(video_path, output_path, filter_size=5):
             break
 
         # Convert frame to grayscale
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
+        if input_bands == -1:
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        else:
+            gray_frame = frame[:,:,input_bands]
         # Convert the frame to float32 for accumulation
         gray_frame_float32 = gray_frame.astype(np.float32)
 
@@ -53,11 +67,17 @@ def temporal_filtering(video_path, output_path, filter_size=5):
         filtered_frame = np.uint8(accumulator)
 
         # Convert the filtered frame to a 3-channel image for visualization
-        filtered_frame_colored = cv2.cvtColor(
-            filtered_frame, cv2.COLOR_GRAY2BGR)
 
+        
+        bands = []
+        for i in range(len(output_bands)):
+            if output_bands[i]:
+                bands.append(filtered_frame)
+            else:
+                bands.append(frame[:,:,i])
+                
         # Write the frame with temporal filtering to the output video
-        out.write(filtered_frame_colored)
+        out.write(cv2.merge(bands))
 
         # Print the progress
         frame_count += 1
