@@ -33,3 +33,80 @@ Building a dataset with name `original-smaller` from the video directory `origin
 - [PALMA Documentation](https://confluence.uni-muenster.de/display/HPC)
 
 ## Documentation
+
+### Scripts for direct usage (inside `/code`)
+Each script, that should be directly called is inside the `/code` directory. The scripts are
+designed as `CLI` tools, which are documented in this section.
+
+
+#### Build a dataset
+```
+> python3 build_dataset.py -h
+usage: build_dataset.py [-h] -video_dir_name VIDEO_DIR_NAME -dataset_name
+                        DATASET_NAME -amount_videos AMOUNT_VIDEOS
+                        -frames_per_video FRAMES_PER_VIDEO
+
+Process videos.
+
+options:
+  -h, --help            show this help message and exit
+  -video_dir_name VIDEO_DIR_NAME
+                        Path to the source videos folder
+  -dataset_name DATASET_NAME
+                        Name of the created dataset
+  -amount_videos AMOUNT_VIDEOS
+                        Amount of random choosen videos for the dataset
+  -frames_per_video FRAMES_PER_VIDEO
+                        Amount of frames per video
+```
+
+#### Preprocessing individual bands
+```
+> python3 preprocess_bands.py -h
+usage: preprocess_bands.py [-h] -source SOURCE [-txt TXT] -save SAVE -func
+                           FUNC [-inband INBAND]
+                           [-outband OUTBAND OUTBAND OUTBAND]
+
+Process videos on band level.
+
+options:
+  -h, --help            show this help message and exit
+  -source SOURCE        Path to the source videos folder
+  -txt TXT              Path to the input text file (default: mp4_files.txt)
+  -save SAVE            Path to the output directory for preprocessed videos
+  -func FUNC            Module and function name for the preprocessing
+                        function (e.g., module_name.function_name)
+  -inband INBAND        Input band for the preprocessing. If inband=-1, use
+                        all bands; otherwise, use the band with index inband
+                        (default: -1)
+  -outband OUTBAND OUTBAND OUTBAND
+                        Used bands for preprocessing. Provide three boolean
+                        values. For True use 1, for False 0 (default: 1 1 1,
+                        meaning True True True)
+```
+
+#### Preprocessing complete videos
+```
+> python3 preprocess_videos.py -h 
+usage: preprocess_videos.py [-h] -source SOURCE -txt TXT -save SAVE -func FUNC
+
+Process videos.
+
+options:
+  -h, --help      show this help message and exit
+  -source SOURCE  Path to the source videos folder
+  -txt TXT        Path to the input text file
+  -save SAVE      Path to the output directory for preprocessed videos
+  -func FUNC      Module and function name for the preprocessing function
+                  (e.g., module_name.function_name)
+
+```
+
+| Function name            | Possible input channels       | Output channels             | Note                                                                             | Implementing process_bands functionality |
+| ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
+| `bg_subtraction`         | 1-3                           | 1 actual, three implemented |                                                                                  |               Yes                           |
+| `contrast_enhancement`   | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  |                  No                        |
+| `morph`                  | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  |                  No                      |
+| `moving_average`         | 3 bands                       | 3 bands                     | Using as output, band 1 for original, band 2 and 3 for different scoped averages |                  No                        |
+| `optical_flow_farneback` | 3 bands                       | 3 bands                     | One original, one result, one black                                              |                  No                        |
+| `temporal_filtering`     | 1 actual, 3 implemnted        | 1 actual, 3 implemented     |                                                                                  |                  Yes                        |
