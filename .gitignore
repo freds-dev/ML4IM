@@ -1,6 +1,8 @@
 .env
 /data
-**/__pycache__**
+**__pycache__**
 .DS_Store
 **/runs**
 **mp4_files.txt
+**/runs
+**.dat
