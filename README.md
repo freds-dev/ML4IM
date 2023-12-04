@@ -139,11 +139,12 @@ options:
   -plots                Generate plots for each epoch(default: True).
 
 ```
-| Function name            | Possible input channels       | Output channels             | Note                                                                             | Implementing process_bands functionality |
 | ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
-| `bg_subtraction`         | 1-3                           | 1 actual, three implemented |                                                                                  |               Yes                           |
-| `contrast_enhancement`   | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  |                  No                        |
-| `morph`                  | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  |                  No                      |
-| `moving_average`         | 3 bands                       | 3 bands                     | Using as output, band 1 for original, band 2 and 3 for different scoped averages |                  No                        |
-| `optical_flow_farneback` | 3 bands                       | 3 bands                     | One original, one result, one black                                              |                  No                        |
-| `temporal_filtering`     | 1 actual, 3 implemnted        | 1 actual, 3 implemented     |                                                                                  |                  Yes                        |
+| ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
+| `bg_subtraction`         | 1-3                           | 1 actual, three implemented |                                                                                  | Yes                                      |
+| `contrast_enhancement`   | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  | No                                       |
+| `morph`                  | 1 actual, implemented 3 bands | 1 actual, three implemented |                                                                                  | No                                       |
+| `moving_average`         | 3 bands                       | 3 bands                     | Using as output, band 1 for original, band 2 and 3 for different scoped averages | No                                       |
+| `optical_flow_farneback` | 3 bands                       | 3 bands                     | One original, one result, one black                                              | No                                       |
+| `temporal_filtering`     | 1 actual, 3 implemnted        | 1 actual, 3 implemented     |                                                                                  | Yes                                      |
+| `rgb_to_hsv`             | 3 needed                      | 3 needed                    | No implementation for `preprocess_bands`                                                                                 | No                                         |
