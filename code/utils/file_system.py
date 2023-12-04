@@ -1,5 +1,6 @@
 import os
 import pathlib
+from alive_progress import alive_bar
 import cv2
 
 from utils.helper import adjust_string_length
@@ -23,17 +24,18 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
     # Determine the number of frames to save
     frames_to_save = min(number_frames, total_frames)
 
-    # Loop through the frames and save them as images
+    #with alive_bar(frames_to_save, title=f'Save video: {video_path}') as bar:
+    frame_count = 0
     for frame_number in range(frames_to_save):
-        ret, frame = cap.read()
-        if not ret:
-            break  # Break the loop if there are no more frames
+            ret, frame = cap.read()
+            if not ret:
+                break  # Break the loop if there are no more frames
 
-        # Save the frame as an image
-        frame_filename = f'img_{video_id}_{adjust_string_length( str(frame_number + 1),6,"0")}.png'
-        cv2.imwrite(os.path.join(str(output_folder), frame_filename),frame)
-        
-        if frame_number % 20 == 0:
-            print(f"{frame_number} frames saved") 
-    # Release the video capture object
+            # Save the frame as an image
+            frame_filename = f'img_{video_id}_{adjust_string_length( str(frame_number + 1),6,"0")}.png'
+            cv2.imwrite(os.path.join(str(output_folder), frame_filename),frame)
+            #bar()
+            print(f"Save frame {frame_count} from video {video_id}")
+            frame_count += 1
+        # Release the video capture object
     cap.release()

@@ -1,6 +1,9 @@
+import chunk
+import math
+import multiprocessing
 import os
 import argparse
-import sys
+import threading
 
 from utils.file_system import create_directory
 from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson
@@ -8,7 +11,21 @@ from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_d
 
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
 
-def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):
+def chunks(lst, chunk_size):
+    """Yield successive n-sized chunks from lst."""
+    if chunk_size <= 0 or not isinstance(chunk_size, int):
+        raise ValueError("chunk_size must be a positive integer")
+    for i in range(0, len(lst), chunk_size):
+        yield lst[i:i + chunk_size]
+
+
+def build_dataset_worker(video_dir, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
+    print("Build dataset worker")
+    print(len(data))
+    for i in range(len(data)):
+        write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir, frames_per_video, subset)
+
+def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int,use_multithreading = True):
     """
     Args:
         video_dir_name (str): Path to the directory containing video files.
@@ -33,7 +50,7 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
         Exception: If the dataset directory already exists or if the requested number of videos is greater than the actual number of labeled videos.
 
     """    
-    
+
     if amount_videos < 1:
         amount_videos = 10000
         
@@ -88,14 +105,40 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
         create_directory(os.path.join(dataset_dir,dir,"images"))
         create_directory(os.path.join(dataset_dir,dir,"labels"))
     
-    for i in range(len(data)):
-        write_data_row(data[i],(i+1),dataset_dir,video_dir, frames_per_video, "train")
+       # Split data for multithreading
+    data_threads, validation_threads, testing_threads = [], [], []
+    
+    
+    num_cores = (multiprocessing.cpu_count()//2) - 2
+    print(f"{num_cores} cores are available")
+    # Multithreading for training data
+    if use_multithreading:
+        data_chunks = list(chunks(data, max(len(data) // num_cores, 1)))
+        for i in range(len(data_chunks)):
+            thread = threading.Thread(
+                target=build_dataset_worker,
+                args=(video_dir, dataset_dir, data_chunks[i], frames_per_video, "train",max(len(data) // num_cores, 1),i)
+            )
+            data_threads.append(thread)
+            thread.start()
 
-    for i in range(len(validation_data)):
-        write_data_row(validation_data[i],(i+1),dataset_dir,video_dir, frames_per_video, "val")
+        # Wait for all threads to finish
+        print(data_threads)
+    # Non-threaded validation and testing data processing
+    validation_threads.append(threading.Thread(
+        target=build_dataset_worker,
+        args=(video_dir, dataset_dir, validation_data, frames_per_video, "val",len(validation_data), len(data_chunks))
+    ))
+    validation_threads[0].start()
 
-    for i in range(len(testing_data)):
-        write_data_row(testing_data[i],(i+1),dataset_dir,video_dir, frames_per_video, "test")
+    testing_threads.append(threading.Thread(
+        target=build_dataset_worker,
+        args=(video_dir, dataset_dir, testing_data, frames_per_video, "test",len(validation_data), len(data_chunks) + 1)
+    ))
+    testing_threads[0].start()
+
+    for thread in data_threads + testing_threads + validation_threads:
+        thread.join()
 
 def write_dataset_yaml(dataset_dir):
     with open(os.path.join(dataset_dir,"data.yaml"),"w") as f:
