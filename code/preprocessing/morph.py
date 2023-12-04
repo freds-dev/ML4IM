@@ -1,3 +1,4 @@
+from alive_progress import alive_bar
 import cv2
 import numpy as np
 
@@ -26,32 +27,29 @@ def morph(video_path, output_path, kernel_size=5):
     # Define a kernel for morphological operations
     kernel = np.ones((kernel_size, kernel_size), np.uint8)
 
-    frame_count = 0
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    with alive_bar(total_frames, title='Processing Frames') as bar:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+            # Convert frame to grayscale
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Convert frame to grayscale
-        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Apply threshold to create a binary image
+            _, binary_mask = cv2.threshold(gray_frame, 1, 255, cv2.THRESH_BINARY)
 
-        # Apply threshold to create a binary image
-        _, binary_mask = cv2.threshold(gray_frame, 1, 255, cv2.THRESH_BINARY)
+            # Apply dilation followed by erosion
+            morphed_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel)
 
-        # Apply dilation followed by erosion
-        morphed_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel)
+            # Convert single-channel image to three-channel
+            morphed_mask_colored = cv2.cvtColor(morphed_mask, cv2.COLOR_GRAY2BGR)
 
-        # Convert single-channel image to three-channel
-        morphed_mask_colored = cv2.cvtColor(morphed_mask, cv2.COLOR_GRAY2BGR)
+            # Write the frame with morphological operations to the output video
+            out.write(morphed_mask_colored)
 
-        # Write the frame with morphological operations to the output video
-        out.write(morphed_mask_colored)
-
-        # Print the progress
-        frame_count += 1
-        print(f"Processing Frame {frame_count}/{total_frames}")
-
+            bar()
     print("Morphological operations complete.")
 
     cap.release()
