@@ -45,7 +45,40 @@ Each script, that should be directly called is inside the `/code` directory. The
 designed as `CLI` tools, which are documented in this section.
 
 
-#### Build a dataset
+#### Build a datset (multithreading)
+```
+> python3 build_dataset_multithread.py -h
+usage: build_dataset_multithread.py [-h] -video_dir_name VIDEO_DIR_NAME
+                                    -dataset_name DATASET_NAME
+                                    [-amount_videos AMOUNT_VIDEOS]
+                                    [-frames_per_video FRAMES_PER_VIDEO]
+                                    [-core_factor CORE_FACTOR]
+
+Process videos.
+
+options:
+  -h, --help            show this help message and exit
+  -video_dir_name VIDEO_DIR_NAME
+                        Path to the source videos folder
+  -dataset_name DATASET_NAME
+                        Name of the created dataset
+  -amount_videos AMOUNT_VIDEOS
+                        Amount of random choosen videos for the dataset. If
+                        the value is below 1, all videos are taken (default =
+                        0)
+  -frames_per_video FRAMES_PER_VIDEO
+                        Amount of frames per video. If the value is below 1,
+                        all videos are taken (default = 0)
+  -core_factor CORE_FACTOR
+                        Capacity of system and cores. The function will
+                        evaluate the number of available cpu cores and
+                        multiplies them with this factor, to determine the
+                        number of used threads. Needs to be in range [0,1]
+                        (default = 0.25)
+
+```
+
+#### Build a dataset (single thread)
 ```
 > python3 build_dataset.py -h
 usage: build_dataset.py [-h] -video_dir_name VIDEO_DIR_NAME -dataset_name
