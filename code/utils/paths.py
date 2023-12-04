@@ -18,4 +18,11 @@ def get_dataset_dir(dataset_name:str)-> str:
 
 def get_video_dir(video_dir_name: str) -> str:
     return os.path.join(get_base_dir(),"videos",video_dir_name)
+
+def get_data_yaml(dataset_name: str) -> str:
+    return os.path.join(get_base_dir(),"datasets",dataset_name,"data.yaml")
     
+def get_result_dir(dataset_name: str) -> str:
+    dir = os.path.join(get_base_dir(),"results",dataset_name)
+    os.makedirs(dir,exist_ok=True)
+    return dir

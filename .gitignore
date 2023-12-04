@@ -4,5 +4,6 @@
 .DS_Store
 **/runs**
 **mp4_files.txt
+**.pt
 **/runs
 **.dat
