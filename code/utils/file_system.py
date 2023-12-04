@@ -35,7 +35,8 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
             frame_filename = f'img_{video_id}_{adjust_string_length( str(frame_number + 1),6,"0")}.png'
             cv2.imwrite(os.path.join(str(output_folder), frame_filename),frame)
             #bar()
-            print(f"Save frame {frame_count} from video {video_id}")
+            if frame_count % 100 == 0:
+                print(f"Save frame {frame_count} from video {video_id}")
             frame_count += 1
         # Release the video capture object
     cap.release()
