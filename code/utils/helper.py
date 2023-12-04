@@ -44,3 +44,12 @@ def pick_n_random_items(input_list, n):
 
     # Return a tuple containing the picked items and non-picked items
     return picked_items, non_picked_items
+
+
+def chunks(lst, chunk_size):
+    """Yield successive n-sized chunks from lst."""
+    if chunk_size <= 0 or not isinstance(chunk_size, int):
+        raise ValueError("chunk_size must be a positive integer")
+    for i in range(0, len(lst), chunk_size):
+        yield lst[i:i + chunk_size]
+

@@ -1,4 +1,3 @@
-import chunk
 import math
 import multiprocessing
 import os
@@ -6,18 +5,10 @@ import argparse
 import threading
 
 from utils.file_system import create_directory
-from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson
+from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks
 from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
 
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
-
-def chunks(lst, chunk_size):
-    """Yield successive n-sized chunks from lst."""
-    if chunk_size <= 0 or not isinstance(chunk_size, int):
-        raise ValueError("chunk_size must be a positive integer")
-    for i in range(0, len(lst), chunk_size):
-        yield lst[i:i + chunk_size]
-
 
 def build_dataset_worker(video_dir, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
     for i in range(len(data)):

@@ -124,6 +124,31 @@ options:
                         meaning True True True)
 ```
 
+#### Preprocessing complete videos (multithread)
+```
+> python3 preprocess_videos_multithread.py -h 
+usage: preprocess_videos_multithread.py [-h] -source SOURCE -txt TXT -save
+                                        SAVE -func FUNC
+                                        [-core_factor CORE_FACTOR]
+
+Process videos.
+
+options:
+  -h, --help            show this help message and exit
+  -source SOURCE        Path to the source videos folder
+  -txt TXT              Path to the input text file
+  -save SAVE            Path to the output directory for preprocessed videos
+  -func FUNC            Module and function name for the preprocessing
+                        function (e.g., module_name.function_name)
+  -core_factor CORE_FACTOR
+                        Capacity of system and cores. The function will
+                        evaluate the number of available cpu cores and
+                        multiplies them with this factor, to determine the
+                        number of used threads. Needs to be in range [0,1]
+                        (default = 0.25)
+
+```
+
 #### Preprocessing complete videos
 ```
 > python3 preprocess_videos.py -h 
