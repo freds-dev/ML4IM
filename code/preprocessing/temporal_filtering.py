@@ -1,3 +1,4 @@
+from alive_progress import alive_bar
 import cv2
 import numpy as np
 
@@ -45,44 +46,44 @@ def temporal_filtering(video_path, output_path,input_bands = -1,  output_bands =
     accumulator = np.zeros((height, width), dtype=np.float32)
 
     frame_count = 0
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    with alive_bar(total_frames, title='Processing Frames') as bar:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        # Convert frame to grayscale
-        if input_bands == -1:
-            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        else:
-            gray_frame = frame[:,:,input_bands]
-        # Convert the frame to float32 for accumulation
-        gray_frame_float32 = gray_frame.astype(np.float32)
-
-        # Apply temporal filtering (exponential moving average)
-        accumulator = (1.0 - 1.0 / filter_size) * accumulator + \
-            1.0 / filter_size * gray_frame_float32
-
-        # Convert the accumulator to uint8 for visualization
-        filtered_frame = np.uint8(accumulator)
-
-        # Convert the filtered frame to a 3-channel image for visualization
-
-        
-        bands = []
-        for i in range(len(output_bands)):
-            if output_bands[i]:
-                bands.append(filtered_frame)
+            # Convert frame to grayscale
+            if input_bands == -1:
+                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             else:
-                bands.append(frame[:,:,i])
-                
-        # Write the frame with temporal filtering to the output video
-        out.write(cv2.merge(bands))
+                gray_frame = frame[:,:,input_bands]
+            # Convert the frame to float32 for accumulation
+            gray_frame_float32 = gray_frame.astype(np.float32)
 
-        # Print the progress
-        frame_count += 1
-        print(f"Processing Frame {frame_count}/{total_frames}")
+            # Apply temporal filtering (exponential moving average)
+            accumulator = (1.0 - 1.0 / filter_size) * accumulator + \
+                1.0 / filter_size * gray_frame_float32
 
+            # Convert the accumulator to uint8 for visualization
+            filtered_frame = np.uint8(accumulator)
+
+            # Convert the filtered frame to a 3-channel image for visualization
+
+            
+            bands = []
+            for i in range(len(output_bands)):
+                if output_bands[i]:
+                    bands.append(filtered_frame)
+                else:
+                    bands.append(frame[:,:,i])
+                    
+            # Write the frame with temporal filtering to the output video
+            out.write(cv2.merge(bands))
+
+            # Print the progress
+            bar()
+            
     print("Temporal filtering complete.")
 
     cap.release()

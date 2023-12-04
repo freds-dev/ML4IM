@@ -1,3 +1,4 @@
+from alive_progress import alive_bar
 import cv2
 
 def bg_subtraction(video_path, output_path,input_bands = -1,  output_bands = [True, True, True]):
@@ -35,31 +36,32 @@ def bg_subtraction(video_path, output_path,input_bands = -1,  output_bands = [Tr
     bg_subtractor = cv2.createBackgroundSubtractorMOG2()
 
     frame_count = 0
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
-        
-        if input_bands == -1:
-            # Apply background subtraction
-            fg_mask = bg_subtractor.apply(frame)
-        else:
-            fg_mask = bg_subtractor.apply(frame[:,:,input_bands])
-        
-        bands = []
-        for i in range(len(output_bands)):
-            if output_bands[i]:
-                bands.append(fg_mask)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    with alive_bar(total_frames, title='Processing Frames') as bar:
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            if input_bands == -1:
+                # Apply background subtraction
+                fg_mask = bg_subtractor.apply(frame)
             else:
-                bands.append(frame[:,:,i])
-                
-        # Write the frame with temporal filtering to the output video
-        out.write(cv2.merge(bands))
+                fg_mask = bg_subtractor.apply(frame[:,:,input_bands])
+            
+            bands = []
+            for i in range(len(output_bands)):
+                if output_bands[i]:
+                    bands.append(fg_mask)
+                else:
+                    bands.append(frame[:,:,i])
+                    
+            # Write the frame with temporal filtering to the output video
+            out.write(cv2.merge(bands))
 
-        # Print the progress
-        frame_count += 1
-        print(f"Processing Frame {frame_count}/{total_frames}")
+            # Print the progress
+            frame_count += 1
+            bar()
 
     print("Background subtraction complete.")
 
