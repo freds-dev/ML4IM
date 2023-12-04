@@ -14,11 +14,17 @@ The hole setup is optimized for using this repo both locally and on PALMA, if yo
     1. `IS_LOCAL`, to `TRUE` if you running local, `FALSE` if you are running on PALMA
     2. `LOCAL_PATH_DATA`, to the root of the data directory created in 2 on your local machine
     3. `PALMA_PATH_DATA`, to the  root of the data directory created in 2 on PALMA commonly somethink like `/scratch/tmp/<username>/path/to/project/data`
-4. `cd` into `code`
-5. Run different scripts based on usage
+4. Run `pip install -r requirements.txt`
+5. `cd` into `code`
+6. Run different scripts based on usage
 
 ## Usage
 The documentation of each script inside `./code` is retrievable by `python <scriptname> -h`
+
+
+### Dependency managment
+
+You can generate the `requirements.txt` running `pipreqs .` from the root of this project (`pipreqs` is installable via `pip`)
 
 ## Examples
 
