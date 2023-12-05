@@ -1,14 +1,20 @@
+import math
+import multiprocessing
 import os
 import argparse
-import sys
+import threading
 
 from utils.file_system import create_directory
-from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson
+from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks
 from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
 
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
 
-def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int):
+def build_dataset_worker(video_dir, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
+    for i in range(len(data)):
+        write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir, frames_per_video, subset)
+
+def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int,core_capacity_factor = 0.25):
     """
     Args:
         video_dir_name (str): Path to the directory containing video files.
@@ -33,7 +39,7 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
         Exception: If the dataset directory already exists or if the requested number of videos is greater than the actual number of labeled videos.
 
     """    
-    
+    assert(core_capacity_factor > 0 and core_capacity_factor < 1)
     if amount_videos < 1:
         amount_videos = 10000
         
@@ -67,7 +73,6 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     validation_data, data = pick_n_random_items(data,amount_validation_videos)
     # If not enough data use all labeled videos
     amount_training_videos = max(amount_videos - (amount_validation_videos + amount_test_videos),1)
-    print(amount_training_videos)
     if len(data) < amount_training_videos:
         print("WARNING: Reuse of test and validation videos in training")
         data = validation_data + data
@@ -88,14 +93,39 @@ def build_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
         create_directory(os.path.join(dataset_dir,dir,"images"))
         create_directory(os.path.join(dataset_dir,dir,"labels"))
     
-    for i in range(len(data)):
-        write_data_row(data[i],(i+1),dataset_dir,video_dir, frames_per_video, "train")
+       # Split data for multithreading
+    data_threads, validation_threads, testing_threads = [], [], []
+    
+    
+    # Minus two for reserving two cores for saving validation and test data
+    num_cores = math.floor(multiprocessing.cpu_count() * core_capacity_factor) - 2
+    print(f"{num_cores} cores are available")
+    # Multithreading for training data
+    data_chunks = list(chunks(data, max(len(data) // num_cores, 1)))
+    for i in range(len(data_chunks)):
+        thread = threading.Thread(
+                target=build_dataset_worker,
+                args=(video_dir, dataset_dir, data_chunks[i], frames_per_video, "train",max(len(data) // num_cores, 1),i)
+            )
+        data_threads.append(thread)
+        thread.start()
 
-    for i in range(len(validation_data)):
-        write_data_row(validation_data[i],(i+1),dataset_dir,video_dir, frames_per_video, "val")
+        # Wait for all threads to finish
+    # Non-threaded validation and testing data processing
+    validation_threads.append(threading.Thread(
+        target=build_dataset_worker,
+        args=(video_dir, dataset_dir, validation_data, frames_per_video, "val",len(validation_data), len(data_chunks))
+    ))
+    validation_threads[0].start()
 
-    for i in range(len(testing_data)):
-        write_data_row(testing_data[i],(i+1),dataset_dir,video_dir, frames_per_video, "test")
+    testing_threads.append(threading.Thread(
+        target=build_dataset_worker,
+        args=(video_dir, dataset_dir, testing_data, frames_per_video, "test",len(validation_data), len(data_chunks) + 1)
+    ))
+    testing_threads[0].start()
+
+    for thread in data_threads + testing_threads + validation_threads:
+        thread.join()
 
 def write_dataset_yaml(dataset_dir):
     with open(os.path.join(dataset_dir,"data.yaml"),"w") as f:
@@ -116,6 +146,7 @@ if __name__ == "__main__":
     parser.add_argument('-dataset_name', required=True, help='Name of the created dataset')
     parser.add_argument('-amount_videos', default=0, help='Amount of random choosen videos for the dataset. If the value is below 1, all videos are taken (default = 0)')
     parser.add_argument('-frames_per_video', default=0, help='Amount of frames per video. If the value is below 1, all videos are taken (default = 0)')
+    parser.add_argument('-core_factor',default=0.25,help="Capacity of system and cores. The function will evaluate the number of available cpu cores and multiplies them with this factor, to determine the number of used threads. Needs to be in range [0,1] (default = 0.25)")
 
     args = parser.parse_args()
    
@@ -123,6 +154,8 @@ if __name__ == "__main__":
     dataset_name = args.dataset_name
     amount_videos = int(args.amount_videos)
     frames_per_video = int(args.frames_per_video)
+    core_factor = float(args.core_factor)
     
-    build_dataset(video_dir_name,dataset_name,amount_videos,frames_per_video)
+    
+    build_dataset(video_dir_name,dataset_name,amount_videos,frames_per_video,core_factor)
  
