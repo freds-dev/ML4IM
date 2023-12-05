@@ -99,6 +99,41 @@ options:
                         Amount of frames per video
 ```
 
+#### Preprocess individual bands (multthread)
+
+```
+> python3 preprocess_bands_multithread.py -h
+
+usage: preprocess_bands_multithread.py [-h] -source SOURCE [-txt TXT] -save
+                                       SAVE -func FUNC [-inband INBAND]
+                                       [-outband OUTBAND OUTBAND OUTBAND]
+                                       [-core_factor CORE_FACTOR]
+
+Process videos on band level.
+
+options:
+  -h, --help            show this help message and exit
+  -source SOURCE        Path to the source videos folder
+  -txt TXT              Path to the input text file (default: mp4_files.txt)
+  -save SAVE            Path to the output directory for preprocessed videos
+  -func FUNC            Module and function name for the preprocessing
+                        function (e.g., module_name.function_name)
+  -inband INBAND        Input band for the preprocessing. If inband=-1, use
+                        all bands; otherwise, use the band with index inband
+                        (default: -1)
+  -outband OUTBAND OUTBAND OUTBAND
+                        Used bands for preprocessing. Provide three boolean
+                        values. For True use 1, for False 0 (default: 1 1 1,
+                        meaning True True True)
+  -core_factor CORE_FACTOR
+                        Capacity of system and cores. The function will
+                        evaluate the number of available cpu cores and
+                        multiplies them with this factor, to determine the
+                        number of used threads. Needs to be in range [0,1]
+                        (default = 0.25)
+
+```
+
 #### Preprocessing individual bands
 ```
 > python3 preprocess_bands.py -h
