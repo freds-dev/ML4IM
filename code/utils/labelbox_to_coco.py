@@ -76,14 +76,11 @@ def labelbox_bb_to_yolo(dict, width, height, cropped_height):
     center_y = dict["top"] + (dict["height"] / 2)
 
     center_x /= width
-    center_y /= width
+    center_y /= cropped_height
     
-    center_y *= (height/cropped_height)
-
     width_bb = dict["width"] / width
     height_bb = dict["height"] / cropped_height  # Adjusted to cropped height
 
-    center_y -= height_bb
     return BoundingBox(center_x, center_y, width_bb, height_bb)
 
 def convert_to_coco_format(json_data) -> [AnnotationsVideo]:
