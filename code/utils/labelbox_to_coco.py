@@ -66,19 +66,25 @@ class AnnotationsVideo:
         for bb in self.annotations:
             res += bb.__str__() +"\n"
         return res
-    
-def labelbox_bb_to_yolo(dict, width, height):
-    center_x = dict["left"] + (dict["width"] /2)
-    center_y = dict["top"] + (dict["height"] /2)
-    
-    center_x /= width
-    center_y /= height
-    
-    width_bb = dict["width"] / width
-    height_bb = dict["height"]/ height
-    
-    return BoundingBox(center_x,center_y,width_bb,height_bb)
 
+def labelbox_bb_to_yolo(dict, width, height, cropped_height):
+    # Adjust top position based on the cropped height
+    #dict["top"] = max(0, dict["top"] - (height - cropped_height))
+
+    # Calculate the center and dimensions
+    center_x = dict["left"] + (dict["width"] / 2)
+    center_y = dict["top"] + (dict["height"] / 2)
+
+    center_x /= width
+    center_y /= width
+    
+    center_y *= (height/cropped_height)
+
+    width_bb = dict["width"] / width
+    height_bb = dict["height"] / cropped_height  # Adjusted to cropped height
+
+    center_y -= height_bb
+    return BoundingBox(center_x, center_y, width_bb, height_bb)
 
 def convert_to_coco_format(json_data) -> [AnnotationsVideo]:
     width, height = json_data["media_attributes"]["width"],json_data["media_attributes"]["height"]
@@ -88,7 +94,7 @@ def convert_to_coco_format(json_data) -> [AnnotationsVideo]:
         annotations_frame = AnnotationsVideo(adjust_string_length(frame, 6, "0"))
         objects = frames[frame]["objects"]
         for objectKey in objects:
-            a = Annotation(objects[objectKey]["name"],labelbox_bb_to_yolo(objects[objectKey]["bounding_box"],width,height))        
+            a = Annotation(objects[objectKey]["name"],labelbox_bb_to_yolo(objects[objectKey]["bounding_box"],width,height,1080))        
             annotations_frame.add_annotation(a)
             
         annotations.append(annotations_frame)

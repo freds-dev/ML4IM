@@ -33,6 +33,7 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
 
             # Save the frame as an image
             frame_filename = f'img_{video_id}_{adjust_string_length( str(frame_number + 1),6,"0")}.png'
+            frame = crop_image(frame)
             cv2.imwrite(os.path.join(str(output_folder), frame_filename),frame)
             #bar()
             if frame_count % 100 == 0:
@@ -40,3 +41,7 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
             frame_count += 1
         # Release the video capture object
     cap.release()
+
+
+def crop_image(frame):
+    return frame[:1080, :]
