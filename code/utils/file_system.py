@@ -43,5 +43,10 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
     cap.release()
 
 
+def write_file(path,content):
+    f = open(path, "w")
+    f.write(content)
+    f.close()
+    print(f"Saved content to {path}")
 def crop_image(frame):
     return frame[:1080, :]
