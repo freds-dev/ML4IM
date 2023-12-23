@@ -24,7 +24,7 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda deactivate
 conda activate /home/j/jdanel/envs/test
 
-python preprocess_video.py -source /scratch/tmp/jdanel/data/videos/{video_dir_input_name} -txt mp4_files.txt -save /scratch/tmp/jdanel/data/videos/{video_dir_output_name} -func {preprocessing_function} 
+python preprocess_videos.py -source /scratch/tmp/jdanel/data/videos/{video_dir_input_name} -txt mp4_files.txt -save /scratch/tmp/jdanel/data/videos/{video_dir_output_name} -func {preprocessing_function} 
 python build_dataset_multithread.py -video_dir_name {video_dir_output_name} -dataset_name {video_dir_output_name}"""
 
 def build_gpu_script(dataset, amount_cpus = 8, memory = 64, hours = 48, partition = "gpu2080"):
