@@ -1,4 +1,5 @@
-
+from file_system import write_file
+import argparse
 
 def build_cpu_script(video_dir_input_name,video_dir_output_name, preprocessing_function, amount_cpus = 18, memory = 48, hours = 10, partition = "normal"):
     return f"""#!/bin/bash
@@ -27,7 +28,7 @@ conda activate /home/j/jdanel/envs/test
 python preprocess_videos.py -source /scratch/tmp/jdanel/data/videos/{video_dir_input_name} -txt mp4_files.txt -save /scratch/tmp/jdanel/data/videos/{video_dir_output_name} -func {preprocessing_function} 
 python build_dataset_multithread.py -video_dir_name {video_dir_output_name} -dataset_name {video_dir_output_name}"""
 
-def build_gpu_script(dataset, amount_cpus = 8, memory = 64, hours = 48, partition = "gpu2080"):
+def build_gpu_script(dataset, index = "first_run", amount_cpus = 8, memory = 64, hours = 48, partition = "gpu2080"):
     return f"""#!/bin/bash
 
 #SBATCH --job-name=t-{dataset}
@@ -53,7 +54,18 @@ conda deactivate
 conda activate /home/j/jdanel/envs/test
 
 export MKL_SERVICE_FORCE_INTEL=1
-python train.py -dataset {dataset} -device [0,1,2,3]"""
+python train.py -dataset {dataset} -device [0,1,2,3] -project original_validation_split -name {index}"""
     
+def main():
+    parser = argparse.ArgumentParser(description="Generate CPU and GPU scripts")
+    parser.add_argument("--script_location", required=True, help="GPU script output name")
+    parser.add_argument("--gpu_dataset", required=True, help="GPU script dataset name")
+    parser.add_argument("--index",required=True, help="Index of split")
+    args = parser.parse_args()
+
+    gpu_script_content = build_gpu_script(args.gpu_dataset,args.index)
+
+    write_file(gpu_script_content, args.script_location)
+
 if __name__ == "__main__":
-    print(build_gpu_script("o-tf-o"))    
+    main()
