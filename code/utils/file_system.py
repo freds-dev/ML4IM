@@ -3,7 +3,7 @@ import pathlib
 from alive_progress import alive_bar
 import cv2
 
-from utils.helper import adjust_string_length
+from helper import adjust_string_length
 
 def create_directory(directory_path):
     # Check if the directory already exists

@@ -25,8 +25,7 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda deactivate
 conda activate /home/j/jdanel/envs/test
 
-python split_dataset.py -video_dir_name original -dataset split_{adjust_string_length(str(index), 3, '0')} -index {index}
-"""
+python split_dataset.py -video_dir_name original -dataset split_{adjust_string_length(str(index), 3, '0')} -index {int(index)}"""
 
 def main():
     parser = argparse.ArgumentParser(description="Build a split script")

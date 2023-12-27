@@ -65,7 +65,7 @@ def main():
 
     gpu_script_content = build_gpu_script(args.gpu_dataset,args.index)
 
-    write_file(gpu_script_content, args.script_location)
+    write_file(args.script_location,gpu_script_content)
 
 if __name__ == "__main__":
     main()
