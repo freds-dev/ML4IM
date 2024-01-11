@@ -62,7 +62,7 @@ def split_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     
     print(f"{len(data)} videos are labeled")
     
-    scenes = get_scene_to_video()
+    scenes = get_scene_to_video_combination()
     ids = scenes[scene]
     validation_data = pop_multiple_items(data,ids)
     # Create directory structure
