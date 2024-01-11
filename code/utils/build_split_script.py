@@ -1,6 +1,7 @@
 import argparse
 from helper import adjust_string_length
 import os
+
 def write_file(path,content):
     # If dir is not exisitng just create it:
     directory = os.path.dirname(path)
