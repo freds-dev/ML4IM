@@ -1,5 +1,6 @@
 import argparse
 from helper import adjust_string_length
+import os
 
 def build_split_script(project_name,scene_name, amount_cpus=18, memory=48, hours=1, partition="normal"):
     return f"""#!/bin/bash
@@ -39,7 +40,7 @@ def main():
     args = parser.parse_args()
 
     split_script = build_split_script(args.project_name,args.scene_name, args.cpus, args.memory, args.hours, args.partition)
-
+    os.makedirs(f"../sbatch/pp/{args.project_name}", exist_ok=True)
     with open(f"../sbatch/pp/{args.project_name}/{args.scene_name}.sh", "w") as script_file:
         script_file.write(split_script)
 

@@ -1,5 +1,6 @@
 from file_system import write_file
 import argparse
+import os
 
 def build_cpu_script(video_dir_input_name,video_dir_output_name, preprocessing_function, amount_cpus = 18, memory = 48, hours = 10, partition = "normal"):
     return f"""#!/bin/bash
@@ -65,7 +66,7 @@ def main():
     args = parser.parse_args()
 
     gpu_script_content = build_gpu_script(args.gpu_dataset,args.index,args.project_name)
-
+    os.makedirs(f"../sbatch/train/{args.project_name}", exist_ok=True)
     write_file(args.script_location,gpu_script_content)
 
 if __name__ == "__main__":
