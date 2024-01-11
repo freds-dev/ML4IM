@@ -49,8 +49,8 @@ def main():
     args = parser.parse_args()
 
     split_script = build_split_script(args.project_name,args.scene_name, args.cpus, args.memory, args.hours, args.partition)
-    os.makedirs(f"../sbatch/pp/{args.project_name}", exist_ok=True)
-    with open(f"../sbatch/pp/{args.project_name}/{args.scene_name}.sh", "w") as script_file:
+    os.makedirs(f"sbatch/pp/{args.project_name}", exist_ok=True)
+    with open(f"sbatch/pp/{args.project_name}/{args.scene_name}.sh", "w") as script_file:
         script_file.write(split_script)
 
 if __name__ == "__main__":
