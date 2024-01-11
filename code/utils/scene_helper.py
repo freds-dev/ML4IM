@@ -22,12 +22,12 @@ def get_all_scenes():
 
 def get_scene_to_video_combination():
     data = read_ndjson(get_annotations_path())
-    dict = dict()
+    comb = dict()
     for i in range(len(data)):
         str = remove_pattern_from_string(data[i]["data_row"]["external_id"])
         if str in dict.keys():
-            dict[str].append(i)
+            comb[str].append(i)
         else:
-            dict[str] = [i]
+            comb[str] = [i]
 
-    return dict 
+    return comb 
