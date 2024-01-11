@@ -12,7 +12,7 @@ def remove_pattern_from_string(input_string):
 
 def get_all_scenes():
     data = read_ndjson(get_annotations_path())
-    data = [d for d in data if os.path.exists(get_video_location(get_video_dir(),d))]
+    data = [d for d in data if os.path.exists(get_video_location(get_video_dir("original"),d))]
     scenes = []
     for entry in data:
         scene_name = remove_pattern_from_string(entry["data_row"]["external_id"])

@@ -12,7 +12,7 @@ def build_split_script(project_name,scene_name, amount_cpus=18, memory=48, hours
 #SBATCH --mem={memory}G                   # how much memory is needed per node (units can be: K, M, G, T)
 #SBATCH --partition={partition}          # on which partition to submit the job
 #SBATCH --time={hours}:00:00             # the max wallclock time (time limit your job will run)
-#SBATCH --output=logs/{project_name}/{pp}/{scene_name}.dat         # the file where output is written to (stdout & stderr)
+#SBATCH --output=logs/{project_name}/pp/{scene_name}.dat         # the file where output is written to (stdout & stderr)
 #SBATCH --mail-type=ALL             # receive an email when your job starts, finishes normally or is aborted
 #SBATCH --mail-user=jdanel@uni-muenster.de # your mail address
 #SBATCH --nice=100
@@ -25,7 +25,7 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda deactivate
 conda activate /home/j/jdanel/envs/test
 
-python /home/j/jdanel/codespace/ML4IM/code/split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene}"""
+python /home/j/jdanel/codespace/ML4IM/code/split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene_name}"""
 
 def main():
     parser = argparse.ArgumentParser(description="Build a split script")
