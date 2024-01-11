@@ -5,16 +5,16 @@ import argparse
 import threading
 
 from utils.file_system import create_directory
-from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks
+from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks,pop_multiple_items
 from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
-
+from utils.scene_helper import get_scene_to_video_combination
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
 
 def build_dataset_worker(video_dir, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
     for i in range(len(data)):
         write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir, frames_per_video, subset)
 
-def split_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int, index = 0,core_capacity_factor = 0.25):
+def split_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int, scene = "",core_capacity_factor = 0.25):
     """
     Args:
         video_dir_name (str): Path to the directory containing video files.
@@ -62,8 +62,9 @@ def split_dataset(video_dir_name: str, dataset_dir_name: str, amount_videos: int
     
     print(f"{len(data)} videos are labeled")
     
-    validation_data = data.pop(index)
-    validation_data = [validation_data]    
+    scenes = get_scene_to_video()
+    ids = scenes[scene]
+    validation_data = pop_multiple_items(data,ids)
     # Create directory structure
     create_directory(dataset_dir)
     create_directory(os.path.join(dataset_dir, "train"))
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     parser.add_argument('-dataset_name', required=True, help='Name of the created dataset')
     parser.add_argument('-amount_videos', default=0, help='Amount of random choosen videos for the dataset. If the value is below 1, all videos are taken (default = 0)')
     parser.add_argument('-frames_per_video', default=0, help='Amount of frames per video. If the value is below 1, all videos are taken (default = 0)')
-    parser.add_argument('-index', type=int,default=0, help="index for splittig the validation set")
+    parser.add_argument('-scene', type=str,default="", help="name of scene for validation")
     parser.add_argument('-core_factor',default=0.25,help="Capacity of system and cores. The function will evaluate the number of available cpu cores and multiplies them with this factor, to determine the number of used threads. Needs to be in range [0,1] (default = 0.25)")
 
     args = parser.parse_args()
@@ -133,8 +134,8 @@ if __name__ == "__main__":
     amount_videos = int(args.amount_videos)
     frames_per_video = int(args.frames_per_video)
     core_factor = float(args.core_factor)
-    index = int(args.index)
+    scene = int(args.scene)
     
     
-    split_dataset(video_dir_name,dataset_name,amount_videos,frames_per_video,index,core_factor)
+    split_dataset(video_dir_name,dataset_name,amount_videos,frames_per_video,scene,core_factor)
  

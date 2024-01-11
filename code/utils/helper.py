@@ -53,3 +53,15 @@ def chunks(lst, chunk_size):
     for i in range(0, len(lst), chunk_size):
         yield lst[i:i + chunk_size]
 
+def pop_multiple_items(lst, indices):
+    # Sort indices in reverse order to avoid index shifting issues
+    indices.sort(reverse=True)
+
+    # Pop items from the list and update indices
+    popped_items = [lst.pop(idx) for idx in indices]
+
+    # Update remaining indices after each pop
+    for popped_idx in indices:
+        indices = [i - 1 if i > popped_idx else i for i in indices]
+
+    return popped_items
