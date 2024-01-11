@@ -134,7 +134,7 @@ if __name__ == "__main__":
     amount_videos = int(args.amount_videos)
     frames_per_video = int(args.frames_per_video)
     core_factor = float(args.core_factor)
-    scene = int(args.scene)
+    scene = args.scene
     
     
     split_dataset(video_dir_name,dataset_name,amount_videos,frames_per_video,scene,core_factor)
