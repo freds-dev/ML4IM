@@ -25,7 +25,7 @@ source $CONDA_BASE/etc/profile.d/conda.sh
 conda deactivate
 conda activate /home/j/jdanel/envs/test
 
-python split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene}"""
+python /home/j/jdanel/codespace/ML4IM/code/split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene}"""
 
 def main():
     parser = argparse.ArgumentParser(description="Build a split script")
@@ -40,7 +40,7 @@ def main():
 
     split_script = build_split_script(args.project_name,args.scene_name, args.cpus, args.memory, args.hours, args.partition)
 
-    with open(f"../sbatch/{args.project_name}/{args.scene_name}.sh", "w") as script_file:
+    with open(f"../sbatch/pp/{args.project_name}/{args.scene_name}.sh", "w") as script_file:
         script_file.write(split_script)
 
 if __name__ == "__main__":

@@ -54,7 +54,7 @@ conda deactivate
 conda activate /home/j/jdanel/envs/test
 
 export MKL_SERVICE_FORCE_INTEL=1
-python train.py -dataset {dataset} -device [0,1,2,3] -project {project_name} -name {index}"""
+python /home/j/jdanel/codespace/ML4IM/code/train.py -dataset {dataset} -device [0,1,2,3] -project {project_name} -name {index}"""
     
 def main():
     parser = argparse.ArgumentParser(description="Generate CPU and GPU scripts")
