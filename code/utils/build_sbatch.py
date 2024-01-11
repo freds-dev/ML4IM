@@ -2,6 +2,15 @@ from utils.file_system import write_file
 import argparse
 import os
 
+def write_file(path,content):
+    # If dir is not exisitng just create it:
+    directory = os.path.dirname(path)
+    os.makedirs(directory, exist_ok=True)
+    f = open(path, "w")
+    f.write(content)
+    f.close()
+    print(f"Saved content to {path}")
+
 def build_cpu_script(video_dir_input_name,video_dir_output_name, preprocessing_function, amount_cpus = 18, memory = 48, hours = 10, partition = "normal"):
     return f"""#!/bin/bash
 

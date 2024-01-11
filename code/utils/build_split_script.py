@@ -1,6 +1,14 @@
 import argparse
 from helper import adjust_string_length
 import os
+def write_file(path,content):
+    # If dir is not exisitng just create it:
+    directory = os.path.dirname(path)
+    os.makedirs(directory, exist_ok=True)
+    f = open(path, "w")
+    f.write(content)
+    f.close()
+    print(f"Saved content to {path}")
 
 def build_split_script(project_name,scene_name, amount_cpus=18, memory=48, hours=1, partition="normal"):
     return f"""#!/bin/bash
