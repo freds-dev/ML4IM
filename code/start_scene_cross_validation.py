@@ -8,10 +8,10 @@ def start_scene_cross_validation(dataset_name):
     
     for scene in scenes:
         # Run the Bash script with arguments
-        subprocess.run(['bash', bash_script_path, dataset_name, scene])
+        subprocess.run(['bash', "create_scene_split.sh", dataset_name, scene])
         
         
-if ____name__ == "__main__":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Start scenic cross validation.')
     parser.add_argument('-dataset', required=True, help='Name of the dataset which is used for training')
 
