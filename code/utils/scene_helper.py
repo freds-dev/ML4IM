@@ -25,7 +25,7 @@ def get_scene_to_video_combination():
     comb = dict()
     for i in range(len(data)):
         str = remove_pattern_from_string(data[i]["data_row"]["external_id"])
-        if str in dict.keys():
+        if str in comb.keys():
             comb[str].append(i)
         else:
             comb[str] = [i]
