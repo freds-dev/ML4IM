@@ -1,6 +1,6 @@
 import argparse
 import os
-from utils.helper import whoami
+from helper import whoami
 
 def write_file(path,content):
     # If dir is not exisitng just create it:
