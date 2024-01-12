@@ -6,4 +6,5 @@ id=$(sbatch sbatch/pp/$1/$2.sh| { read text; echo ${text##* };})
 echo "Submitted preprocessing for $i split on id: $id"
 python utils/build_sbatch.py --script_location sbatch/train/$1/$2.sh --gpu_dataset $1.$2 --index $2 --project_name $1
 sbatch --dependency=afterok:$id sbatch/train/$1/$2.sh
+echo "\n\n\n"
 
