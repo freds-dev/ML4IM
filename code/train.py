@@ -2,10 +2,11 @@ import argparse
 from ultralytics import YOLO
 from utils.paths import get_data_yaml, get_result_dir
 
-def train(dataset, epochs = 100, batch = -1, save_period = 10, name = "first_run", model_path='yolov8n.yaml', exist_ok = False,device=0, plots=True):
+def train(dataset, epochs = 100, batch = -1, save_period = 10,project="", name = "first_run", model_path='yolov8n.yaml', exist_ok = False,device=0, plots=True):
     model = YOLO('yolov8n.pt')
     yaml_file = get_data_yaml(dataset)
     
+    project_dir = get_result_dir(dataset) if project == "" else get_result_dir(project)
     results = model.train(
         model=model_path,
         data=yaml_file,
@@ -15,7 +16,7 @@ def train(dataset, epochs = 100, batch = -1, save_period = 10, name = "first_run
         save=True,
         save_period=save_period,
         device=device,
-        project=get_result_dir(dataset),
+        project=project_dir,
         name=name,
         exist_ok=False,
         pretrained=True,
@@ -30,6 +31,7 @@ def main():
     parser.add_argument('-epochs', type=int, default=100, help='Number of training epochs (default: 100).')
     parser.add_argument('-batch', type=int, default=-1, help='Batch size for training, -1 uses an automatic approach to define a well defined batch size(default: -1).')
     parser.add_argument('-save_period', type=int, default=10, help='Save model checkpoints every N epochs (default: 10).')
+    parser.add_argument('-project',type=str, default="",help="Name of the result directory.")
     parser.add_argument('-name', default="first_run", help='The name of the run. It will use the dataset as project and this name as name of the actual running experiment')
     parser.add_argument('-model_path', default='yolov8n.yaml', help='Path to the YOLO model configuration file (default: yolov8n.yaml).')
     parser.add_argument('-device', default=0, help='Device index for training (default: 0). Use arrays (e.g. [0,1] for multiple gpu usage and "cpu" for using cpu)')
@@ -43,6 +45,7 @@ def main():
         epochs=args.epochs,
         batch=args.batch,
         save_period=args.save_period,
+        project=args.project,
         name=args.name,
         model_path=args.model_path,
         device=args.device,
