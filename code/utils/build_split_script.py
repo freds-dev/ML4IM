@@ -1,5 +1,5 @@
 import argparse
-from helper import adjust_string_length
+from helper import adjust_string_length, whoami
 import os
 
 def write_file(path,content):
@@ -12,6 +12,7 @@ def write_file(path,content):
     print(f"Saved content to {path}")
 
 def build_split_script(project_name,scene_name, amount_cpus=18, memory=48, hours=1, partition="normal"):
+    user = whoami()
     return f"""#!/bin/bash
 
 #SBATCH --job-name=pp-split-{project_name}{scene_name}
@@ -24,7 +25,7 @@ def build_split_script(project_name,scene_name, amount_cpus=18, memory=48, hours
 #SBATCH --time={hours}:00:00             # the max wallclock time (time limit your job will run)
 #SBATCH --output=logs/{project_name}/pp/{scene_name}.dat         # the file where output is written to (stdout & stderr)
 #SBATCH --mail-type=ALL             # receive an email when your job starts, finishes normally or is aborted
-#SBATCH --mail-user=jdanel@uni-muenster.de # your mail address
+#SBATCH --mail-user={user}@uni-muenster.de # your mail address
 #SBATCH --nice=100
  
 module purge
@@ -33,9 +34,9 @@ module load palma/2021a Miniconda3/4.9.2
 CONDA_BASE=$(conda info --base)
 source $CONDA_BASE/etc/profile.d/conda.sh
 conda deactivate
-conda activate /home/j/jdanel/envs/test
+conda activate /home/{user[0]}/{user}/envs/test
 
-python /home/j/jdanel/codespace/ML4IM/code/split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene_name}"""
+python /home/{user[0]}/{user}/codespace/ML4IM/code/split_dataset.py -video_dir_name {project_name} -dataset {project_name}.{scene_name} -scene {scene_name}"""
 
 def main():
     parser = argparse.ArgumentParser(description="Build a split script")

@@ -1,6 +1,7 @@
 import math
 import json
 from random import sample, seed
+import subprocess
 
 def percentage_floored(n:int, percentage: float)-> int:
     return max(math.floor(n * percentage),1)
@@ -65,3 +66,8 @@ def pop_multiple_items(lst, indices):
         indices = [i - 1 if i > popped_idx else i for i in indices]
 
     return popped_items
+
+
+def whoami():
+    # Subprocess running the unix command whoami and returning the result
+    return subprocess.Popen(["whoami"],stdout=subprocess.PIPE).communicate()[0].decode("utf-8").strip()
