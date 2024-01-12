@@ -43,7 +43,7 @@ def build_gpu_script(dataset, index = "first_run",project_name= "", amount_cpus 
     user = whoami()
     return f"""#!/bin/bash
 
-#SBATCH --job-name=t-{dataset}
+#SBATCH --job-name=t-{project_name}-{dataset}
 #SBATCH --export=NONE               # Start with a clean environment
 #SBATCH --nodes=1                   # the number of nodes you want to reserve
 #SBATCH --gres=gpu:4 
@@ -52,7 +52,7 @@ def build_gpu_script(dataset, index = "first_run",project_name= "", amount_cpus 
 #SBATCH --mem={memory}G                   # how much memory is needed per node (units can be: K, M, G, T)
 #SBATCH --partition={partition}          # on which partition to submit the job
 #SBATCH --time={hours}:00:00             # the max wallclock time (time limit your job will run)
-#SBATCH --output=logs/train-{dataset}.dat         # the file where output is written to (stdout & stderr)
+#SBATCH --output=logs/{project_name}/train/{dataset}.dat         # the file where output is written to (stdout & stderr)
 #SBATCH --mail-type=ALL             # receive an email when your job starts, finishes normally or is aborted
 #SBATCH --mail-user={user}@uni-muenster.de # your mail address
 #SBATCH --nice=100
