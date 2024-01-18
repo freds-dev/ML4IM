@@ -1,9 +1,20 @@
-results_dir <- "./../results/original_validation_split/"
+DATASET_NAME <- "original"
+
+results_dir <- file.path("..","results",DATASET_NAME)
 
 results_names <-
   list.files(results_dir) |> tools::file_path_sans_ext()
 
-results_location <- file.path(list.files(results_dir, full.names = T),"results.csv")
+results_names <- results_names[!results_names == "first_run"]
+results_names <- results_names[!results_names == "first_run1"]
+results_names <- results_names[!results_names == "first_run2"]
+results_names <- results_names[!results_names == "first_run3"]
+results_names <- results_names[!results_names == "first_run4"]
+
+
+
+
+results_location <- file.path(results_dir,results_names,"results.csv")
 
 res = NULL
 for (i in 1:length(results_location)) {
@@ -28,8 +39,7 @@ for (i in 1:length(results_location)) {
 
 # Load ggplot2 package
 library(ggplot2)
-
-generate_bar_plot <- function(data, data_column, label_column = "name") {
+generate_bar_plot <- function(data, data_column,title, label_column = "name") {
 
   # Check if the required columns exist in the data frame
   if (!(label_column %in% names(data) && data_column %in% names(data))) {
@@ -39,24 +49,26 @@ generate_bar_plot <- function(data, data_column, label_column = "name") {
   # Determine the color scale limits based on the data_column
   scale_limits <- range(data[[data_column]])
 
-  # Create the bar plot using ggplot2
-  plot <- ggplot(data, aes_string(x = label_column, y = data_column, fill = data[[data_column]])) +
+  # Create the bar plot using ggplot2 with x and y axes switched
+  plot <- ggplot(data, aes_string(x = data_column, y = label_column, fill = data[[data_column]])) +
     geom_bar(stat = "identity", color = "black") +
     scale_fill_viridis_c(
       limits = scale_limits
     ) +
     geom_text(aes(label = sprintf("%.2f", data[[data_column]])),
-              position = position_stack(vjust = 1.05),  # Adjust the vjust parameter
+              #position = position_stack(vjust = 1.05),  # Adjust the vjust parameter
+              nudge_x = 1,
               color = "black",
               size = 3) +
-    labs(title = "Bar Plot",
-         x = label_column,
-         y = data_column) +
+    labs(title = title,
+         x = data_column,
+         y = label_column) +
     theme_minimal()
 
   # Print the plot
   return(plot)
 }
+
 
 # Example usage:
 # generate_bar_plot(res, "metrics.mAP50.B.", "your_label_column")
@@ -64,9 +76,9 @@ factor <- 2
 names <- names(res)
 for(name in names){
   if(name != "name"){
-  plot <- generate_bar_plot(res,name)
+  plot <- generate_bar_plot(res,name,title =DATASET_NAME)
   ggsave(
-    filename = file.path("splits",paste0(name,".png")),
+    filename = file.path("visualizations",DATASET_NAME,paste0(name,".png")),
     plot = plot,
     width = 16 * factor,
     height = 9 * factor,
