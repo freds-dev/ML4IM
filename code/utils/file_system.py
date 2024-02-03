@@ -12,12 +12,13 @@ def create_directory(directory_path):
     else:
         print(f"Directory '{directory_path}' already exists")    
 
-def save_frames_from_video(video_path,output_folder, number_frames, video_id):
+def save_frames_from_video(video_path_event,video_path_rgb,rg_index,output_folder, number_frames, video_id):
     # Open the video file
-    cap = cv2.VideoCapture(video_path)
+    cap_event = cv2.VideoCapture(video_path_event)
+    cap_rgb = cv2.VideoCapture(video_path_rgb)
 
     # Get video properties
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    total_frames = min(int(cap_event.get(cv2.CAP_PROP_FRAME_COUNT)),int(cap_rgb.get(cv2.CAP_PROP_FRAME_COUNT)))
 
     # Determine the number of frames to save
     frames_to_save = min(number_frames, total_frames)
@@ -25,20 +26,25 @@ def save_frames_from_video(video_path,output_folder, number_frames, video_id):
     #with alive_bar(frames_to_save, title=f'Save video: {video_path}') as bar:
     frame_count = 0
     for frame_number in range(frames_to_save):
-            ret, frame = cap.read()
-            if not ret:
+            ret_event, frame_event = cap_event.read()
+            ret_rgb, frame_rgb = cap_rgb.read()
+            if not ret_event or not ret_rgb:
                 break  # Break the loop if there are no more frames
 
             # Save the frame as an image
             frame_filename = f'img_{video_id}_{adjust_string_length( str(frame_number + 1),6,"0")}.png'
-            frame = crop_image(frame)
+            frame_event = crop_image(frame_event)
+            frame_rgb = crop_image(frame_rgb)
+            frame = cv2.cvtColor(frame_event, cv2.COLOR_RGB2RGBA)
+            frame[:,:,3] = 255 #TODO: Use really the loaded data instead of constant
             cv2.imwrite(os.path.join(str(output_folder), frame_filename),frame)
             #bar()
             if frame_count % 100 == 0:
                 print(f"Save frame {frame_count} from video {video_id}")
             frame_count += 1
         # Release the video capture object
-    cap.release()
+    cap_event.release()
+    cap_rgb.release()
 
 
 def write_file(path,content):
