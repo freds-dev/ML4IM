@@ -1,8 +1,8 @@
 import os
 
-from alive_progress import alive_bar
 from utils.helper import adjust_string_length
 from utils.file_system import save_frames_from_video
+from utils.build_dataset_config import ImageConfig
 
 
 def video_is_labeled(labelbox_data: dict) -> bool:
@@ -67,7 +67,7 @@ class AnnotationsVideo:
             res += bb.__str__() +"\n"
         return res
 
-def labelbox_bb_to_yolo(dict, width, height, cropped_height):
+def labelbox_bb_to_yolo(dict, width, cropped_height):
     # Adjust top position based on the cropped height
     #dict["top"] = max(0, dict["top"] - (height - cropped_height))
 
@@ -91,13 +91,13 @@ def convert_to_coco_format(json_data) -> [AnnotationsVideo]:
         annotations_frame = AnnotationsVideo(adjust_string_length(frame, 6, "0"))
         objects = frames[frame]["objects"]
         for objectKey in objects:
-            a = Annotation(objects[objectKey]["name"],labelbox_bb_to_yolo(objects[objectKey]["bounding_box"],width,height,1080))        
+            a = Annotation(objects[objectKey]["name"],labelbox_bb_to_yolo(objects[objectKey]["bounding_box"],width,1080))        
             annotations_frame.add_annotation(a)
             
         annotations.append(annotations_frame)
     return annotations
 
-def write_data_row(data_row:dict,video_id:int,dataset_dir:str, video_base_dir_event:str,video_base_dir_rgb:str,rgb_index:int, frames_per_video, type: str = "train"):
+def write_data_row(data_row:dict,video_id:int,dataset_dir:str, video_base_dir_event:str,video_base_dir_rgb:str,config: ImageConfig, frames_per_video, type: str = "train"):
     video_id = adjust_string_length(str(video_id),3,"0")
     video_location_event = get_video_location(video_base_dir_event, data_row)
     video_location_rgb = get_video_location(video_base_dir_rgb, data_row)
@@ -107,4 +107,4 @@ def write_data_row(data_row:dict,video_id:int,dataset_dir:str, video_base_dir_ev
             if frame.frame_as_int <= frames_per_video:
                 frame.save_to_file(f"{dataset_dir}/{type}/labels/",video_id)
                 #bar()    
-    save_frames_from_video(video_location_event,video_location_rgb,rgb_index,os.path.join(dataset_dir,type,"images"),frames_per_video,video_id)
+    save_frames_from_video(video_location_event,video_location_rgb,config,os.path.join(dataset_dir,type,"images"),frames_per_video,video_id)
