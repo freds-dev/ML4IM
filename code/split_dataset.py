@@ -3,18 +3,20 @@ import multiprocessing
 import os
 import argparse
 import threading
+import json
 
 from utils.file_system import create_directory
 from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks,pop_multiple_items
 from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
 from utils.scene_helper import get_scene_to_video_combination
-from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir
+from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir, get_config_path
+from utils.build_dataset_config import ImageConfig
 
-def build_dataset_worker(video_dir_event,video_dir_rgb,rgb_index, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
+def build_dataset_worker(video_dir_event,video_dir_rgb,config, dataset_dir, data, frames_per_video, subset,chunk_size, chunk_id):
     for i in range(len(data)):
-        write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir_event,video_dir_rgb,rgb_index, frames_per_video, subset)
+        write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir_event,video_dir_rgb,config, frames_per_video, subset)
 
-def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, rgb_index: int, dataset_dir_name: str, amount_videos: int, frames_per_video: int, scene = "",core_capacity_factor = 0.25):
+def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int, scene = "",core_capacity_factor = 0.25):
     """
     Args:
         video_dir_name (str): Path to the directory containing video files.
@@ -39,7 +41,9 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, rgb_index: i
         Exception: If the dataset directory already exists or if the requested number of videos is greater than the actual number of labeled videos.
 
     """
-    assert(rgb_index >= 0 and rgb_index < 3)    
+    f = open(get_config_path("rgbe.json"))
+    config = ImageConfig.from_json(json.loads(f.read()))
+    
     assert(core_capacity_factor > 0 and core_capacity_factor < 1)
     if amount_videos < 1:
         amount_videos = 10000
@@ -92,7 +96,7 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, rgb_index: i
     for i in range(len(data_chunks)):
         thread = threading.Thread(
                 target=build_dataset_worker,
-                args=(video_dir_name_event,video_dir_name_rgb,rgb_index, dataset_dir, data_chunks[i], frames_per_video, "train",max(len(data) // num_cores, 1),i)
+                args=(video_dir_name_event,video_dir_name_rgb,config, dataset_dir, data_chunks[i], frames_per_video, "train",max(len(data) // num_cores, 1),i)
             )
         data_threads.append(thread)
         thread.start()
@@ -101,7 +105,7 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, rgb_index: i
     # Non-threaded validation and testing data processing
     validation_threads.append(threading.Thread(
         target=build_dataset_worker,
-        args=(video_dir_name_event,video_dir_name_rgb,rgb_index, dataset_dir, validation_data, frames_per_video, "val",len(validation_data), 0)
+        args=(video_dir_name_event,video_dir_name_rgb,config, dataset_dir, validation_data, frames_per_video, "val",len(validation_data), 0)
     ))
     validation_threads[0].start()
 
@@ -125,7 +129,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process videos.')
     parser.add_argument('-video_dir_name_event', required=True, help='Path to the source videos folder')
     parser.add_argument('-video_dir_name_rgb', required=True, help='Path to the source videos folder')
-    parser.add_argument('-rgb_index', required=True, help='Index of the rgb video.')
+    parser.add_argument('-config_name', required=True, help='Name of the channel configuration file.')
     parser.add_argument('-dataset_name', required=True, help='Name of the created dataset')
     parser.add_argument('-amount_videos', default=0, help='Amount of random choosen videos for the dataset. If the value is below 1, all videos are taken (default = 0)')
     parser.add_argument('-frames_per_video', default=0, help='Amount of frames per video. If the value is below 1, all videos are taken (default = 0)')
@@ -136,7 +140,7 @@ if __name__ == "__main__":
    
     video_dir_name_event = args.video_dir_name_event
     video_dir_name_rgb = args.video_dir_name_rgb
-    rgb_index = int(args.rgb_index)
+    config_name = args.config_name
     dataset_name = args.dataset_name
     amount_videos = int(args.amount_videos)
     frames_per_video = int(args.frames_per_video)
@@ -144,5 +148,5 @@ if __name__ == "__main__":
     scene = args.scene
     
     
-    split_dataset(video_dir_name_event,video_dir_name_rgb,rgb_index,dataset_name,amount_videos,frames_per_video,scene,core_factor)
+    split_dataset(video_dir_name_event,video_dir_name_rgb,config_name,dataset_name,amount_videos,frames_per_video,scene,core_factor)
  
