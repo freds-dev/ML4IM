@@ -10,6 +10,18 @@ PALMA_PATH_DATA = os.getenv('PALMA_PATH_DATA')
 def get_base_dir()-> str:
     return LOCAL_PATH_DATA if IS_LOCAL else PALMA_PATH_DATA
 
+def get_homography() -> str:
+    return os.path.join(get_base_dir(), "homography_calib.yaml")
+
+def get_calib_rgb() -> str:
+    return os.path.join(get_base_dir(), "calib_dng.yaml")
+
+def get_calib_event() -> str:
+    return os.path.join(get_base_dir(), "calib_raw.yaml")
+
+def get_config_path(config_name:str) -> str:
+    return os.path.join(get_base_dir(),"configs",config_name)
+
 def get_annotations_path()->str:
     return os.path.join(get_base_dir(), "annotations.ndjson")
 
