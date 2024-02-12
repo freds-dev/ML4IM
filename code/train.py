@@ -1,7 +1,6 @@
-import argparse
-from ultralytics import YOLO
-from utils.paths import get_data_yaml, get_result_dir
+from yolov7_custom.train import main
 
+"""
 def train(dataset, epochs = 100, batch = -1, save_period = 10,project="", name = "first_run", model_path='yolov8n.yaml', exist_ok = False,device=0, plots=True):
     model = YOLO('yolov8n.pt')
     yaml_file = get_data_yaml(dataset)
@@ -52,6 +51,6 @@ def main():
         exist_ok=args.exist_ok,
         plots=args.plots
     )
-
+"""
 if __name__ == "__main__":
     main()
