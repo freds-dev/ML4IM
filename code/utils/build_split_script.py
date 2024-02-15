@@ -47,7 +47,7 @@ def main():
     parser.add_argument("--config_name",type=str,required=True,help="Name of the configuration file")
     parser.add_argument("--cpus", type=int, default=18, help="Number of CPUs")
     parser.add_argument("--memory", type=int, default=48, help="Memory in GB")
-    parser.add_argument("--hours", type=int, default=1, help="Wallclock time in hours")
+    parser.add_argument("--hours", type=int, default=12, help="Wallclock time in hours")
     parser.add_argument("--partition", default="normal", help="Partition for the job")
 
     args = parser.parse_args()
