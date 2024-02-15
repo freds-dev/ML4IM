@@ -66,7 +66,7 @@ conda deactivate
 conda activate /home/{user[0]}/{user}/envs/test
 
 export MKL_SERVICE_FORCE_INTEL=1
-python /home/{user[0]}/{user}/codespace/ML4IM/code/train.py -dataset {dataset} -device [0,1,2,3] -project {project_name} -name {index}"""
+python /home/{user[0]}/{user}/codespace/ML4IM/code/yolov7_custom/train.py --data /scratch/tmp/{user}/data/datasets/{dataset}.{index}/data.yaml --device 0,1,2,3 --project /scratch/tmp/{user}/data/results/{project_name} --name {index} --four-channels"""
     
 def main():
     parser = argparse.ArgumentParser(description="Generate CPU and GPU scripts")

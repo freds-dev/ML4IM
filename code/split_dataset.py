@@ -6,7 +6,7 @@ import threading
 import json
 
 from utils.file_system import create_directory
-from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks,pop_multiple_items
+from utils.helper import  percentage_floored, pick_n_random_items, read_ndjson,chunks,pop_multiple_items, whoami
 from utils.labelbox_to_coco import get_video_location, video_is_labeled, write_data_row
 from utils.scene_helper import get_scene_to_video_combination
 from utils.paths import get_annotations_path, get_video_dir, get_dataset_dir, get_config_path
@@ -41,7 +41,7 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name:
         Exception: If the dataset directory already exists or if the requested number of videos is greater than the actual number of labeled videos.
 
     """
-    f = open(get_config_path("rgbe.json"))
+    f = open(get_config_path(config_name))
     config = ImageConfig.from_json(json.loads(f.read()))
     
     assert(core_capacity_factor > 0 and core_capacity_factor < 1)
@@ -115,10 +115,10 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name:
 def write_dataset_yaml(dataset_dir):
     with open(os.path.join(dataset_dir,"data.yaml"),"w") as f:
         f.write(
-            """
-train: ./train/images 
-val: ./val/images
-test: ./test/images
+            f"""
+train: {dataset_dir}/train/images 
+val: {dataset_dir}/val/images
+test: {dataset_dir}/test/images
 nc: 1 
 names: ['insect']
             """
