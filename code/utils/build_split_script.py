@@ -11,7 +11,7 @@ def write_file(path,content):
     f.close()
     print(f"Saved content to {path}")
 
-def build_split_script(project_name,video_event_name,video_rgb_name,config_name,scene_name, amount_cpus=18, memory=48, hours=1, partition="normal"):
+def build_split_script(project_name,video_event_name,video_rgb_name,config_name,scene_name, amount_cpus=36, memory=92, hours=24, partition="normal,long,requeue"):
     user = whoami()
     return f"""#!/bin/bash
 
