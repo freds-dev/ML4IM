@@ -10,12 +10,15 @@ exclude_list <-
     "original_cropped",
     "original_bg-subtract_original",
     "original_bg-temp-filter",
-    "original_validation_split"
+    "original_validation_split",
+    "original_bg-sub_orignal",
+    "rgbe",
+    "rgbe2",
+    "original"
   )
 
-unfinished <- c("original","o-tf-o","original_bg-sub_orignal")
 
-datasets <- setdiff(dirs, c(exclude_list,unfinished))
+datasets <- setdiff(dirs, exclude_list)
 
 
 for (dataset in datasets) {
