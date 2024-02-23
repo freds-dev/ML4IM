@@ -1,4 +1,13 @@
 # Debug: parameter <- "metrics.mAP50.B."
+add_filename_column <- function(df) {
+  # Extract file name from 'File' column
+  df$Filename <- sub(".*/([^/]+)\\.csv", "\\1", df$File)
+  
+  # Remove file extension
+  df$Filename <- sub("\\.csv", "", df$Filename)
+  
+  return(df)
+}
 
 for(parameter in c("epoch","metrics.precision.B.","metrics.recall.B.","metrics.mAP50.B.","metrics.mAP50.95.B.")){
 
@@ -12,8 +21,8 @@ df_list <- list()
 # Loop through each file
 for (file in files) {
   # Read the CSV file
+  print(file)
   data <- read.csv(file)
-  
   name <- strsplit(file,"/") |> unlist() 
   # Create a data frame with the specified column
   df_file <- data.frame(File = file, Value = data[[parameter]])
@@ -24,7 +33,7 @@ for (file in files) {
 
 # Combine all data frames into a single data frame
 df <- do.call(rbind, df_list)
-
+df <- add_filename_column(df)
 
 library(ggplot2)
 
@@ -43,7 +52,7 @@ create_boxplot <- function(data, file_column, value_column) {
 
 factor <- 2
 # Example usage:
-p <- create_boxplot(df, "File", "Value")
+p <- create_boxplot(df, "Filename", "Value")
 ggsave(
   filename = file.path("visualizations", "boxplots", paste0(parameter, ".png")),
   plot = p,
