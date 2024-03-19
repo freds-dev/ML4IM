@@ -1,4 +1,4 @@
-project <- "rgbe3"
+project <- "original_bg-sub_temp_filter_rgb"
 
 files <- list.files(file.path("..", "results", project))
 
