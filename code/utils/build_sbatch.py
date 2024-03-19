@@ -39,7 +39,7 @@ conda activate /home/{user[0]}/{user}/envs/test
 python preprocess_videos.py -source /scratch/tmp/{user}/data/videos/{video_dir_input_name} -txt mp4_files.txt -save /scratch/tmp/{user}/data/videos/{video_dir_output_name} -func {preprocessing_function} 
 python build_dataset_multithread.py -video_dir_name {video_dir_output_name} -dataset_name {video_dir_output_name}"""
 
-def build_gpu_script(dataset, index = "first_run",project_name= "", amount_cpus = 8, memory = 64, hours = 96, partition = "gpu2080,gputitanrtx,gpu3090,gpua100,gpuhgx"):
+def build_gpu_script(dataset, index = "first_run",project_name= "", amount_cpus = 8, memory = 64, hours = 96, partition = "gpu2080,gputitanrtx,gpua100,gpuhgx"):
     user = whoami()
     return f"""#!/bin/bash
 
