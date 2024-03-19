@@ -38,9 +38,48 @@ from utils.loss import ComputeLoss, ComputeLossOTA
 from utils.plots import plot_lr_scheduler, plot_images, plot_labels, plot_results, plot_evolution
 from utils.torch_utils import ModelEMA, select_device, intersect_dicts, torch_distributed_zero_first, is_parallel
 from utils.wandb_logging.wandb_utils import WandbLogger, check_wandb_resume
-from ..utils.paths import get_data_yaml, get_result_dir
 logger = logging.getLogger(__name__)
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+IS_LOCAL = os.getenv('IS_LOCAL') == "TRUE"
+LOCAL_PATH_DATA = os.getenv('LOCAL_PATH_DATA')
+PALMA_PATH_DATA = os.getenv('PALMA_PATH_DATA')
+
+def get_base_dir()-> str:
+    return LOCAL_PATH_DATA if IS_LOCAL else PALMA_PATH_DATA
+
+def get_homography() -> str:
+    return os.path.join(get_base_dir(), "homography_calib.yaml")
+
+def get_calib_rgb() -> str:
+    return os.path.join(get_base_dir(), "calib_dng.yaml")
+
+def get_calib_event() -> str:
+    return os.path.join(get_base_dir(), "calib_raw.yaml")
+
+def get_config_path(config_name:str) -> str:
+    return os.path.join(get_base_dir(),"configs",config_name)
+
+def get_annotations_path()->str:
+    return os.path.join(get_base_dir(), "annotations.ndjson")
+
+def get_dataset_dir(dataset_name:str)-> str:
+    return os.path.join(get_base_dir(),"datasets",dataset_name)
+
+def get_video_dir(video_dir_name: str) -> str:
+    return os.path.join(get_base_dir(),"videos",video_dir_name)
+
+def get_data_yaml(dataset_name: str) -> str:
+    return os.path.join(get_base_dir(),"datasets",dataset_name,"data.yaml")
+    
+def get_result_dir(dataset_name: str) -> str:
+    dir = os.path.join(get_base_dir(),"results",dataset_name)
+    os.makedirs(dir,exist_ok=True)
+    return dir
 
 def train(hyp, opt, device, tb_writer=None):
     logger.info(colorstr('hyperparameters: ') + ', '.join(f'{k}={v}' for k, v in hyp.items()))
@@ -88,18 +127,18 @@ def train(hyp, opt, device, tb_writer=None):
 
     # Model
     pretrained = weights.endswith('.pt')
-    if pretrained:
-        with torch_distributed_zero_first(rank):
-            attempt_download(weights)  # download if not found locally
-        ckpt = torch.load(weights, map_location=device)  # load checkpoint
-        model = Model(opt.cfg or ckpt['model'].yaml, ch=(4 if opt.four_channels else 3)*opt.multi_frame, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
-        exclude = ['anchor'] if (opt.cfg or hyp.get('anchors')) and not opt.resume else []  # exclude keys
-        state_dict = ckpt['model'].float().state_dict()  # to FP32
-        state_dict = intersect_dicts(state_dict, model.state_dict(), exclude=exclude)  # intersect
-        model.load_state_dict(state_dict, strict=False)  # load
-        logger.info('Transferred %g/%g items from %s' % (len(state_dict), len(model.state_dict()), weights))  # report
-    else:
-        model = Model(opt.cfg, ch=(4 if opt.four_channels else 3)*opt.multi_frame, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
+    #if pretrained:
+    #    with torch_distributed_zero_first(rank):
+    #        attempt_download(weights)  # download if not found locally
+    #    ckpt = torch.load(weights, map_location=device)  # load checkpoint
+    #    model = Model(opt.cfg or ckpt['model'].yaml, ch=(4 if opt.four_channels else 3)*opt.multi_frame, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
+    #    exclude = ['anchor'] if (opt.cfg or hyp.get('anchors')) and not opt.resume else []  # exclude keys
+    #    state_dict = ckpt['model'].float().state_dict()  # to FP32
+    #    state_dict = intersect_dicts(state_dict, model.state_dict(), exclude=exclude)  # intersect
+    #    model.load_state_dict(state_dict, strict=False)  # load
+    #    logger.info('Transferred %g/%g items from %s' % (len(state_dict), len(model.state_dict()), weights))  # report
+    #else:
+    model = Model(opt.cfg, ch=(4 if opt.four_channels else 3)*opt.multi_frame, nc=nc, anchors=hyp.get('anchors')).to(device)  # create
     with torch_distributed_zero_first(rank):
         check_dataset(data_dict)  # check
     train_path = data_dict['train']
@@ -208,6 +247,7 @@ def train(hyp, opt, device, tb_writer=None):
 
     # Resume
     start_epoch, best_fitness = 0, 0.0
+    """
     if pretrained:
         # Optimizer
         if ckpt['optimizer'] is not None:
@@ -233,7 +273,7 @@ def train(hyp, opt, device, tb_writer=None):
             epochs += ckpt['epoch']  # finetune additional epochs
 
         del ckpt, state_dict
-
+"""
     # if opt.multi_frame > 1:
         # multi_train_path = stack_images(train_path, opt.multi_frame)
         # train_path = multi_train_path
@@ -477,8 +517,22 @@ def train(hyp, opt, device, tb_writer=None):
                     tb_writer.add_scalar(tag, x, epoch)  # tensorboard
                 if wandb_logger.wandb:
                     wandb_logger.log({tag: x})  # W&B
+           
+
+
+            def flatten_data(data):
+                flattened_data = []
+                for item in data:
+                    if isinstance(item, np.ndarray):
+                        flattened_data.extend(item.flatten())
+                    else:
+                        flattened_data.append(item)
+                return flattened_data
 
             # Update best mAP
+            print(results)
+            results = flatten_data(results)
+            print(results)
             fi = fitness(np.array(results).reshape(1, -1))  # weighted combination of [P, R, mAP@.5, mAP@.5-.95]
             if fi > best_fitness:
                 best_fitness = fi
@@ -571,13 +625,13 @@ def train(hyp, opt, device, tb_writer=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', type=str, default='yolo7.pt', help='initial weights path')
-    parser.add_argument('--cfg', type=str, default='', help='model.yaml path')
-    parser.add_argument('--dataset', type=str, default='data/coco.yaml', help='data.yaml path')
-    parser.add_argument('--hyp', type=str, default='data/hyp.scratch.p5.yaml', help='hyperparameters path')
+    parser.add_argument('--weights', type=str, default='/scratch/tmp/jdanel/data/best.pt', help='initial weights path')
+    parser.add_argument('--cfg', type=str, default='/home/j/jdanel/codespace/ML4IM/code/yolov7_custom/cfg/training/yolov7.yaml', help='model.yaml path')
+    parser.add_argument('--data', type=str, default='data/coco.yaml', help='data.yaml path')
+    parser.add_argument('--hyp', type=str, default='/home/j/jdanel/codespace/ML4IM/code/yolov7_custom/data/hyp.scratch.p5.yaml', help='hyperparameters path')
     parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--batch-size', type=int, default=16, help='total batch size for all GPUs')
-    parser.add_argument('--img-size', nargs='+', type=int, default=[640, 640], help='[train, test] image sizes')
+    parser.add_argument('--batch-size', type=int, default=16, help='total batch size for all GPUs') #TODO: Change default to 256
+    parser.add_argument('--img-size', nargs='+', type=int, default=[1280, 1280], help='[train, test] image sizes') # TODO: Change default to 1280,1280
     parser.add_argument('--rect', action='store_true', help='rectangular training')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
     parser.add_argument('--nosave', action='store_true', help='only save final checkpoint')
@@ -613,14 +667,10 @@ def main():
     parser.add_argument('--multi-frame', type=int, default=1, choices=range(1,101), help='how many frames to load at once')
     parser.add_argument('--center-point', action='store_true', help='use center point metric instead of iou')
     opt = parser.parse_args()
-
+    print(opt.data)
     # Set DDP variables
     opt.world_size = int(os.environ['WORLD_SIZE']) if 'WORLD_SIZE' in os.environ else 1
     opt.global_rank = int(os.environ['RANK']) if 'RANK' in os.environ else -1
-    dataset = opt.dataset
-    opt.dataset = get_data_yaml(dataset)
-    opt.project = get_result_dir(dataset)
-
     set_logging(opt.global_rank)
     #if opt.global_rank in [-1, 0]:
     #    check_git_status()

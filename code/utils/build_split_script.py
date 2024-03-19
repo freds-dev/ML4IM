@@ -45,10 +45,10 @@ def main():
     parser.add_argument("--video_event_name", type=str, required=True,help="Directory where the event videos are located")
     parser.add_argument("--video_rgb_name", type=str, required=True,help="Directory where the rgb videos are located")
     parser.add_argument("--config_name",type=str,required=True,help="Name of the configuration file")
-    parser.add_argument("--cpus", type=int, default=18, help="Number of CPUs")
-    parser.add_argument("--memory", type=int, default=48, help="Memory in GB")
-    parser.add_argument("--hours", type=int, default=12, help="Wallclock time in hours")
-    parser.add_argument("--partition", default="normal", help="Partition for the job")
+    parser.add_argument("--cpus", type=int, default=36, help="Number of CPUs")
+    parser.add_argument("--memory", type=int, default=25, help="Memory in GB")
+    parser.add_argument("--hours", type=int, default=8, help="Wallclock time in hours")
+    parser.add_argument("--partition", default="normal,long", help="Partition for the job")
 
     args = parser.parse_args()
 
