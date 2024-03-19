@@ -1,9 +1,27 @@
+library(ggplot2)
 create_boxplot <- function(data, value_column, category_column1, category_column2, title = NULL, angle = 45, metric_labels = NULL) {
   
   default_title <- ifelse(is.null(title), paste("Box Plot for", substitute(data)), title)
   
   plot <- ggplot2::ggplot(data, ggplot2::aes(x = factor(get(category_column2)), y = get(value_column), fill = factor(get(category_column1)))) +
     ggplot2::geom_boxplot() +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = median(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = -0.5, 
+                          position = position_dodge(width = 0.75)) +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = max(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = 1.5, 
+                          position = position_dodge(width = 0.75), 
+                          show.legend = FALSE) +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = min(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = -0.5, 
+                          position = position_dodge(width = 0.75), 
+                          show.legend = FALSE) +
     ggplot2::labs(x = category_column2, y = value_column, fill = category_column1, title = default_title) +
     ggplot2::theme_minimal() +
     ggplot2::theme(axis.text.x = element_text(angle = angle, hjust = 1))  # Rotate x-axis labels
@@ -14,6 +32,10 @@ create_boxplot <- function(data, value_column, category_column1, category_column
   
   return(plot)  # Return the ggplot object
 }
+
+
+
+
 
 
 
@@ -67,9 +89,9 @@ factor <- 2
 ggsave(
   filename = file.path("visualizations", "boxplots",  "overview.png"),
   plot = plt,
-  width = 16 * factor,
+  width = 21 * factor,
   height = 16 * factor,
-  units = "cm"
+  units = "cm",
+  dpi = 300
 )
-cat("Saved: ", parameter, "\n")
 
