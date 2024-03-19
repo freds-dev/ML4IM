@@ -17,7 +17,7 @@ def start_scene_cross_validation(dataset_name,video_event_name,video_rgb_name,co
         # Run the Bash script with arguments
         if id is None:
             id = -1
-        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id)]).strip().split("\n")[-1]
+        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id)]).decode('utf-8').strip().split("\n")[-1]
         
         
 if __name__ == "__main__":
@@ -30,4 +30,4 @@ if __name__ == "__main__":
    
 
     args = parser.parse_args()
-    start_scene_cross_validation(args.dataset,args.video_event_name,args.video_rgb_name,args.config_nameargs.exception_scenes)
+    start_scene_cross_validation(args.dataset,args.video_event_name,args.video_rgb_name,args.config_name,args.exception_scenes)
