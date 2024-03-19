@@ -9,8 +9,29 @@ add_filename_column <- function(df) {
   return(df)
 }
 
-for(parameter in c("epoch","metrics.precision.B.","metrics.recall.B.","metrics.mAP50.B.","metrics.mAP50.95.B.")){
+# Initialize experiment names based on unique values of df$Filename
+experiment_names <- c(
+  "o-bs-tf_hsv"                     = "(DVS_DVS-BS_DVS-TF)-HSV",
+  "o-bs-tf"                         = "DVS_DVS-BS_DVS-TF",
+  "o-tf-o_hsv"                      = "(DVS_DVS-BS_DVS)-HSV",
+  "o-tf-o"                          = "DVS_DVS-BS_DVS",
+  "original_bg-sub_temp_filter_rgb" = "DVS_DVS-BS_DVS-BS-TF_RGB-BS",
+  "original_bg-sub_temp-filter_hsv" = "(DVS_DVS-BS_DVS-BS-TF)-HSV",
+  "original_bg-sub_temp-filter"     = "DVS_DVS-BS_DVS-BS-TF",
+  "original_hsv"                    = "(DVS_DVS_DVS)-HSV",
+  "original"                        = "DVS_DVS_DVS",
+  "rgbe3"                           = "RGB-R_RGB-G_RGB-B_DVS"
+)
 
+
+
+colors = c("#FFFFFF" ,"#00BFC4" ,"#C77CFF", "#7CAE00" ,"#F8766D")
+ylabels = c("Epoch", "Precision", "Recall", "mAP@0.5", "mAP@0.5-0.95")
+c("epoch","metrics.precision.B.","metrics.recall.B.","metrics.mAP50.B.","metrics.mAP50.95.B.") -> parameters
+for(i in 1:length(parameters)){
+parameter <- parameters[i]
+color <- colors[i]
+ylabel <- ylabels[i]
 
 # Check file paths
 files <- list.files("results/cross-validation", full.names = TRUE)
@@ -34,15 +55,39 @@ for (file in files) {
 # Combine all data frames into a single data frame
 df <- do.call(rbind, df_list)
 df <- add_filename_column(df)
+df$ExperimentName <- experiment_names[df$Filename]
 
 library(ggplot2)
 
-
-create_boxplot <- function(data, file_column, value_column) {
+create_boxplot <- function(data, file_column, value_column, color, xlabel = "Experiment", ylabel = "Bla") {
+  # Calculate median for each group
+  median_values <- aggregate(data[[value_column]], by = list(data[[file_column]]), FUN = median)
+  
+  # Reorder levels based on median values
+  ordered_levels <- median_values[order(-median_values$x), "Group.1"]
+  data[[file_column]] <- factor(data[[file_column]], levels = ordered_levels)
+  
   # Create a boxplot using ggplot2 with rotated axis labels
   p <- ggplot(data, aes(x = get(file_column), y = get(value_column))) +
-    geom_boxplot() +
-    labs(title = "Boxplot for Each File", x = "File", y = "Value") +
+    geom_boxplot(fill = color) +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = median(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = -0.5, 
+                          position = position_dodge(width = 0.75)) +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = max(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = 1.5, 
+                          position = position_dodge(width = 0.75), 
+                          show.legend = FALSE) +
+    ggplot2::stat_summary(fun.data = function(x) { data.frame(y = min(x)) }, 
+                          geom = "text", 
+                          aes(label = ifelse(floor(..y..) == 0, sprintf("%.3f", ..y..), sprintf("%.3f", ..y..))), 
+                          vjust = -0.5, 
+                          position = position_dodge(width = 0.75), 
+                          show.legend = FALSE) +
+    labs(title = "Boxplot for Each File", x = xlabel, y = ylabel) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
   
@@ -50,15 +95,17 @@ create_boxplot <- function(data, file_column, value_column) {
   return(p)
 }
 
-factor <- 2
-# Example usage:
-p <- create_boxplot(df, "Filename", "Value")
+
+
+factor <- 1
+p <- create_boxplot(df, "ExperimentName", "Value",color, ylabel = ylabel)
 ggsave(
   filename = file.path("visualizations", "boxplots", paste0(parameter, ".png")),
   plot = p,
-  width = 16 * factor,
+  width = 21 * factor,
   height = 16 * factor,
-  units = "cm"
+  units = "cm",
+  dpi = 450
 )
 cat("Saved: ", parameter, "\n")
 
