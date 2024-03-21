@@ -23,6 +23,19 @@ experiment_names <- c(
   "rgbe3"                           = "RGB-R_RGB-G_RGB-B_DVS"
 )
 
+experiment_ids <- c(
+  "o-bs-tf_hsv"                     = "01",
+  "o-bs-tf"                         = "02",
+  "o-tf-o_hsv"                      = "03",
+  "o-tf-o"                          = "04",
+  "original_bg-sub_temp_filter_rgb" = "05",
+  "original_bg-sub_temp-filter_hsv" = "06",
+  "original_bg-sub_temp-filter"     = "07",
+  "original_hsv"                    = "08",
+  "original"                        = "09",
+  "rgbe3"                           = "10"
+)
+
 
 
 colors = c("#FFFFFF" ,"#00BFC4" ,"#C77CFF", "#7CAE00" ,"#F8766D")
@@ -56,6 +69,7 @@ for (file in files) {
 df <- do.call(rbind, df_list)
 df <- add_filename_column(df)
 df$ExperimentName <- experiment_names[df$Filename]
+df$ExperimentID <- experiment_ids[df$Filename]
 
 library(ggplot2)
 
@@ -87,9 +101,9 @@ create_boxplot <- function(data, file_column, value_column, color, xlabel = "Exp
                           vjust = -0.5, 
                           position = position_dodge(width = 0.75), 
                           show.legend = FALSE) +
-    labs(title = "Boxplot for Each File", x = xlabel, y = ylabel) +
+    labs(title = paste0("Distribution of ",ylabel," scores"), x = xlabel, y = ylabel) +
     theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    theme(plot.title = element_text(size=10))
   
   # Print the boxplot
   return(p)
@@ -97,15 +111,15 @@ create_boxplot <- function(data, file_column, value_column, color, xlabel = "Exp
 
 
 
-factor <- 1
-p <- create_boxplot(df, "ExperimentName", "Value",color, ylabel = ylabel)
+height_factor <- 1
+width_size <- 8.50714756389
+p <- create_boxplot(df, "ExperimentID", "Value",color, ylabel = ylabel)
 ggsave(
   filename = file.path("visualizations", "boxplots", paste0(parameter, ".png")),
   plot = p,
-  width = 21 * factor,
-  height = 16 * factor,
+  width = width_size,
+  height = width_size * height_factor,
   units = "cm",
-  dpi = 450
 )
 cat("Saved: ", parameter, "\n")
 
