@@ -2,7 +2,6 @@
 Study project - machine learning for insect monitoring
 
 ## Structure
-Sure, here's a breakdown of the directory structure:
 
 - **archive**: Contains archived or deprecated files.
 - **code**: This directory holds all the code-related files.
@@ -16,7 +15,7 @@ Sure, here's a breakdown of the directory structure:
   - **videos**: Video data.
     - **tm_1**: Data related to "tm_1".
       - **2023-09-30-perennial_garden_extssd**: Data related to perennial garden with a specific date.
-- **R**: R language related files.
+- **R**: R language related files: Scripts that evaluate and visualize yolo results.
 - **report**: Files related to reports.
   - **data**: Data files related to the report.
     - **cross-validation**: Data related to cross-validation.
