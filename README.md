@@ -1,6 +1,37 @@
 # ML4IM
 Study project - machine learning for insect monitoring
 
+## Structure
+Sure, here's a breakdown of the directory structure:
+
+- **archive**: Contains archived or deprecated files.
+- **code**: This directory holds all the code-related files.
+  - **frames**: Possibly contains code related to handling or processing frames from videos.
+  - **preprocessing**: Code related to preprocessing data, possibly for model training.
+    - **__pycache__**: Cached Python files for faster execution.
+  - **utils**: Utility functions or modules.
+    - **__pycache__**: Cached Python files for faster execution.
+  - **yolov7_custom**: The "yolov7_custom" directory contains a customized implementation of YOLOv7 and is cloned from the repository at https://github.com/PaulaScharf/yolov7-custom.
+  - **data**: Data files.
+  - **videos**: Video data.
+    - **tm_1**: Data related to "tm_1".
+      - **2023-09-30-perennial_garden_extssd**: Data related to perennial garden with a specific date.
+- **R**: R language related files.
+- **report**: Files related to reports.
+  - **data**: Data files related to the report.
+    - **cross-validation**: Data related to cross-validation.
+  - **figures**: Figures or visualizations for the report.
+    - **preprocessings**: Preprocessing-related figures.
+      - **extracted_frames**: Figures related to extracted frames.
+    - **results**: Result-related figures.
+      - **boxplots**: Boxplot figures.
+- **results**: Result files.
+  - **cross-validation**: Cross-validation results.
+- **scripts**: Scripts.
+- **visualizations**: Visualizations or figures.
+  - **boxplots**: Boxplot visualizations.
+  - **combined-results-wo-cross**: Combined results without cross-validation visualizations.
+  
 
 ## Setup
 The hole setup is optimized for using this repo both locally and on PALMA, if you setup the system in both environments following these instructions, it is easy to quickly change between both environments 
