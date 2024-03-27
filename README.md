@@ -3,18 +3,18 @@ Study project - machine learning for insect monitoring
 
 ## Experiments
 
-| Channels | Channel-Encoding | ID | Name                               |
-|------------|-----|----|------------------------------------|
-|  3          | RGB    | 01 | DVS\_DVS\_DVS                     |
-|  3          | RGB    | 02 | DVS\_DVS--TF\_DVS                 |
-|  3          | RGB    | 03 | DVS\_DVS--BS\_DVS-TF              |
-|  3          | RGB    | 04 | DVS\_DVS--BS\_DVS--BS--TF         |
-|  3          | HSV | 05 | (DVS\_DVS\_DVS)--HSV              |
-|  3          | HSV    | 06 | (DVS\_DVS--TF\_DVS)--HSV          |
-|  3          | HSV    | 07 | (DVS\_DVS--BS\_DVS--TF)--HSV      |
-|  3          | HSV    | 08 | (DVS\_DVS--BS\_DVS--BS--TF)--HSV  |
-| 4         | RGB    | 09 | RGB-R\_RGB-G\_RGB-B\_DVS          |
-|  4          |  RGB   | 10 | DVS\_DVS--BS\_DVS--BS--TF\_RGB--BS |
+| Channels | Channel-Encoding | ID | Name                               | Model |
+|------------|-----|----|------------------------------------|-----------------------|
+|  3          | RGB    | 01 | DVS\_DVS\_DVS                     | [Best performing model](https://github.com/freds-dev/ML4IM/releases/01) |
+|  3          | RGB    | 02 | DVS\_DVS-TF\_DVS                 | [Best performing model](https://github.com/freds-dev/ML4IM/releases/02) |
+|  3          | RGB    | 03 | DVS\_DVS-BS\_DVS-TF              | [Best performing model](https://github.com/freds-dev/ML4IM/releases/03) |
+|  3          | RGB    | 04 | DVS\_DVS-BS\_DVS-BS-TF         | [Best performing model](https://github.com/freds-dev/ML4IM/releases/04) |
+|  3          | HSV | 05 | (DVS\_DVS\_DVS)-HSV              | [Best performing model](https://github.com/freds-dev/ML4IM/releases/05) |
+|  3          | HSV    | 06 | (DVS\_DVS-TF\_DVS)-HSV          | [Best performing model](https://github.com/freds-dev/ML4IM/releases/06) |
+|  3          | HSV    | 07 | (DVS\_DVS-BS\_DVS-TF)-HSV      | [Best performing model](https://github.com/freds-dev/ML4IM/releases/07) |
+|  3          | HSV    | 08 | (DVS\_DVS-BS\_DVS-BS-TF)-HSV  | [Best performing model](https://github.com/freds-dev/ML4IM/releases/08) |
+| 4         | RGB    | 09 | RGB-R\_RGB-G\_RGB-B\_DVS          | [Best performing model](https://github.com/freds-dev/ML4IM/releases/09) |
+|  4          |  RGB   | 10 | DVS\_DVS-BS\_DVS-BS-TF\_RGB-BS | [Best performing model](https://github.com/freds-dev/ML4IM/releases/10) |
 
 
 ## Structure
