@@ -1,6 +1,22 @@
 # ML4IM
 Study project - machine learning for insect monitoring
 
+## Experiments
+
+| Channels | Channel-Encoding | ID | Name                               |
+|------------|-----|----|------------------------------------|
+|  3          | RGB    | 01 | DVS\_DVS\_DVS                     |
+|  3          | RGB    | 02 | DVS\_DVS--TF\_DVS                 |
+|  3          | RGB    | 03 | DVS\_DVS--BS\_DVS-TF              |
+|  3          | RGB    | 04 | DVS\_DVS--BS\_DVS--BS--TF         |
+|  3          | HSV | 05 | (DVS\_DVS\_DVS)--HSV              |
+|  3          | HSV    | 06 | (DVS\_DVS--TF\_DVS)--HSV          |
+|  3          | HSV    | 07 | (DVS\_DVS--BS\_DVS--TF)--HSV      |
+|  3          | HSV    | 08 | (DVS\_DVS--BS\_DVS--BS--TF)--HSV  |
+| 4         | RGB    | 09 | RGB-R\_RGB-G\_RGB-B\_DVS          |
+|  4          |  RGB   | 10 | DVS\_DVS--BS\_DVS--BS--TF\_RGB--BS |
+
+
 ## Structure
 
 - **archive**: Contains archived or deprecated files.
