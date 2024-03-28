@@ -278,6 +278,23 @@ options:
   -plots                Generate plots for each epoch(default: True).
 
 ```
+
+### Scripts for evaluating and visualizing results of trainings (`./R`)
+Hery you find a short text describing what each file inside the `./R` directory is doing
+
+#### `generate_combined_results.R`
+#### `generate_split_results.R`
+#### `compare_cross_validations.R`
+#### `create_cross_validation_results_y7.R`
+#### `generate_box_plots.R`
+#### `plot_overview_results.R`
+#### `paired_t_test.R`
+#### `paired_t_test_overview.R`
+#### `pairwise_t_tests.R`
+#### `print_cross_validation_overview.R`
+#### `plot_fitness.R`
+
+
 | ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
 | ------------------------ | ----------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------- |
 | `bg_subtraction`         | 1-3                           | 1 actual, three implemented |                                                                                  | Yes                                      |
