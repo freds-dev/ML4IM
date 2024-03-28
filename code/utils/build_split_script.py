@@ -11,7 +11,7 @@ def write_file(path,content):
     f.close()
     print(f"Saved content to {path}")
 
-def build_split_script(project_name,video_event_name,video_rgb_name,config_name,scene_name, amount_cpus=36, memory=92, hours=24, partition="normal,long,requeue"):
+def build_split_script(project_name,video_event_name,video_rgb_name,config_name,scene_name, amount_cpus=9, memory=92, hours=24, partition="normal,long,requeue"):
     user = whoami()
     return f"""#!/bin/bash
 
@@ -45,9 +45,9 @@ def main():
     parser.add_argument("--video_event_name", type=str, required=True,help="Directory where the event videos are located")
     parser.add_argument("--video_rgb_name", type=str, required=True,help="Directory where the rgb videos are located")
     parser.add_argument("--config_name",type=str,required=True,help="Name of the configuration file")
-    parser.add_argument("--cpus", type=int, default=36, help="Number of CPUs")
-    parser.add_argument("--memory", type=int, default=25, help="Memory in GB")
-    parser.add_argument("--hours", type=int, default=8, help="Wallclock time in hours")
+    parser.add_argument("--cpus", type=int, default=9, help="Number of CPUs")
+    parser.add_argument("--memory", type=int, default=92, help="Memory in GB")
+    parser.add_argument("--hours", type=int, default=5, help="Wallclock time in hours")
     parser.add_argument("--partition", default="normal,long", help="Partition for the job")
 
     args = parser.parse_args()

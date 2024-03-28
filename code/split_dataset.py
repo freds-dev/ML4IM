@@ -16,7 +16,7 @@ def build_dataset_worker(video_dir_event,video_dir_rgb,config, dataset_dir, data
     for i in range(len(data)):
         write_data_row(data[i],(chunk_size * chunk_id)+i +1  , dataset_dir, video_dir_event,video_dir_rgb,config, frames_per_video, subset)
 
-def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int, scene = "",core_capacity_factor = 0.25):
+def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name: str, dataset_dir_name: str, amount_videos: int, frames_per_video: int, scene = "",core_capacity_factor = 1):
     """
     Args:
         video_dir_name (str): Path to the directory containing video files.
@@ -44,7 +44,7 @@ def split_dataset(video_dir_name_event: str,video_dir_name_rgb:str, config_name:
     f = open(get_config_path(config_name))
     config = ImageConfig.from_json(json.loads(f.read()))
     
-    assert(core_capacity_factor > 0 and core_capacity_factor < 1)
+    assert(core_capacity_factor > 0 and core_capacity_factor <= 1)
     if amount_videos < 1:
         amount_videos = 10000
         
@@ -134,7 +134,7 @@ if __name__ == "__main__":
     parser.add_argument('-amount_videos', default=0, help='Amount of random choosen videos for the dataset. If the value is below 1, all videos are taken (default = 0)')
     parser.add_argument('-frames_per_video', default=0, help='Amount of frames per video. If the value is below 1, all videos are taken (default = 0)')
     parser.add_argument('-scene', type=str,default="", help="name of scene for validation")
-    parser.add_argument('-core_factor',default=0.25,help="Capacity of system and cores. The function will evaluate the number of available cpu cores and multiplies them with this factor, to determine the number of used threads. Needs to be in range [0,1] (default = 0.25)")
+    parser.add_argument('-core_factor',default=1,help="Capacity of system and cores. The function will evaluate the number of available cpu cores and multiplies them with this factor, to determine the number of used threads. Needs to be in range [0,1] (default = 1)")
 
     args = parser.parse_args()
    

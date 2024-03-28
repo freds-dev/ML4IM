@@ -8,3 +8,7 @@
 **/runs
 **.dat
 results
+code/wandb
+code/sbatch
+code/*.png
+sbatch
