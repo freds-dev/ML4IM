@@ -91,9 +91,8 @@ Each script, that should be directly called is inside the `/code` directory. The
 designed as `CLI` tools, which are documented in this section.
 
 
-#### Build a datset (multithreading)
+#### `build_dataset_multithread.py`
 ```
-> python3 build_dataset_multithread.py -h
 usage: build_dataset_multithread.py [-h] -video_dir_name VIDEO_DIR_NAME
                                     -dataset_name DATASET_NAME
                                     [-amount_videos AMOUNT_VIDEOS]
@@ -121,15 +120,13 @@ options:
                         multiplies them with this factor, to determine the
                         number of used threads. Needs to be in range [0,1]
                         (default = 0.25)
-
 ```
 
-#### Build a dataset (single thread)
+#### `build_dataset.py`
 ```
-> python3 build_dataset.py -h
 usage: build_dataset.py [-h] -video_dir_name VIDEO_DIR_NAME -dataset_name
-                        DATASET_NAME -amount_videos AMOUNT_VIDEOS
-                        -frames_per_video FRAMES_PER_VIDEO
+                        DATASET_NAME [-amount_videos AMOUNT_VIDEOS]
+                        [-frames_per_video FRAMES_PER_VIDEO]
 
 Process videos.
 
@@ -140,16 +137,16 @@ options:
   -dataset_name DATASET_NAME
                         Name of the created dataset
   -amount_videos AMOUNT_VIDEOS
-                        Amount of random choosen videos for the dataset
+                        Amount of random choosen videos for the dataset. If
+                        the value is below 1, all videos are taken (default =
+                        0)
   -frames_per_video FRAMES_PER_VIDEO
-                        Amount of frames per video
+                        Amount of frames per video. If the value is below 1,
+                        all videos are taken (default = 0)
 ```
 
-#### Preprocess individual bands (multthread)
-
+#### `preprocess_bands_multithread.py`
 ```
-> python3 preprocess_bands_multithread.py -h
-
 usage: preprocess_bands_multithread.py [-h] -source SOURCE [-txt TXT] -save
                                        SAVE -func FUNC [-inband INBAND]
                                        [-outband OUTBAND OUTBAND OUTBAND]
@@ -177,12 +174,10 @@ options:
                         multiplies them with this factor, to determine the
                         number of used threads. Needs to be in range [0,1]
                         (default = 0.25)
-
 ```
 
-#### Preprocessing individual bands
+#### `preprocess_bands.py`
 ```
-> python3 preprocess_bands.py -h
 usage: preprocess_bands.py [-h] -source SOURCE [-txt TXT] -save SAVE -func
                            FUNC [-inband INBAND]
                            [-outband OUTBAND OUTBAND OUTBAND]
@@ -205,9 +200,8 @@ options:
                         meaning True True True)
 ```
 
-#### Preprocessing complete videos (multithread)
+#### `preprocess_videos_multithread.py`
 ```
-> python3 preprocess_videos_multithread.py -h 
 usage: preprocess_videos_multithread.py [-h] -source SOURCE -txt TXT -save
                                         SAVE -func FUNC
                                         [-core_factor CORE_FACTOR]
@@ -227,12 +221,10 @@ options:
                         multiplies them with this factor, to determine the
                         number of used threads. Needs to be in range [0,1]
                         (default = 0.25)
-
 ```
 
-#### Preprocessing complete videos
+#### `preprocess_videos.py`
 ```
-> python3 preprocess_videos.py -h 
 usage: preprocess_videos.py [-h] -source SOURCE -txt TXT -save SAVE -func FUNC
 
 Process videos.
@@ -244,9 +236,68 @@ options:
   -save SAVE      Path to the output directory for preprocessed videos
   -func FUNC      Module and function name for the preprocessing function
                   (e.g., module_name.function_name)
-
 ```
-#### Training a model
+
+#### `split_dataset.py`
+```
+usage: split_dataset.py [-h] -video_dir_name_event VIDEO_DIR_NAME_EVENT
+                        -video_dir_name_rgb VIDEO_DIR_NAME_RGB -config_name
+                        CONFIG_NAME -dataset_name DATASET_NAME
+                        [-amount_videos AMOUNT_VIDEOS]
+                        [-frames_per_video FRAMES_PER_VIDEO] [-scene SCENE]
+                        [-core_factor CORE_FACTOR]
+
+Process videos.
+
+options:
+  -h, --help            show this help message and exit
+  -video_dir_name_event VIDEO_DIR_NAME_EVENT
+                        Path to the source videos folder
+  -video_dir_name_rgb VIDEO_DIR_NAME_RGB
+                        Path to the source videos folder
+  -config_name CONFIG_NAME
+                        Name of the channel configuration file.
+  -dataset_name DATASET_NAME
+                        Name of the created dataset
+  -amount_videos AMOUNT_VIDEOS
+                        Amount of random choosen videos for the dataset. If
+                        the value is below 1, all videos are taken (default =
+                        0)
+  -frames_per_video FRAMES_PER_VIDEO
+                        Amount of frames per video. If the value is below 1,
+                        all videos are taken (default = 0)
+  -scene SCENE          name of scene for validation
+  -core_factor CORE_FACTOR
+                        Capacity of system and cores. The function will
+                        evaluate the number of available cpu cores and
+                        multiplies them with this factor, to determine the
+                        number of used threads. Needs to be in range [0,1]
+                        (default = 1)
+```
+
+#### `start_scene_cross_validation.py`
+```
+usage: start_scene_cross_validation.py [-h] -dataset DATASET -video_event_name
+                                       VIDEO_EVENT_NAME -video_rgb_name
+                                       VIDEO_RGB_NAME -config_name CONFIG_NAME
+                                       [-exception_scenes EXCEPTION_SCENES [EXCEPTION_SCENES ...]]
+
+Start scenic cross validation.
+
+options:
+  -h, --help            show this help message and exit
+  -dataset DATASET      Name of the dataset which is used for training
+  -video_event_name VIDEO_EVENT_NAME
+                        Directory where the event videos are located
+  -video_rgb_name VIDEO_RGB_NAME
+                        Directory where the rgb videos are located
+  -config_name CONFIG_NAME
+                        Name of the configuration file
+  -exception_scenes EXCEPTION_SCENES [EXCEPTION_SCENES ...]
+                        Array of scnees that will not be validated
+```
+
+#### `train.py`
 ```
 > python3 train.py -h
 usage: train.py [-h] -dataset DATASET [-epochs EPOCHS] [-batch BATCH]
