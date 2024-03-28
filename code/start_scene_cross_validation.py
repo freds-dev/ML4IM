@@ -17,7 +17,7 @@ def start_scene_cross_validation(dataset_name,video_event_name,video_rgb_name,co
         # Run the Bash script with arguments
         if id is None:
             id = -1
-        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id)]).decode('utf-8').strip().split("\n")[-1]
+        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id)], dry_run).decode('utf-8').strip().split("\n")[-1]
         
         
 if __name__ == "__main__":
@@ -27,7 +27,12 @@ if __name__ == "__main__":
     parser.add_argument("-video_rgb_name", type=str, required=True,help="Directory where the rgb videos are located")
     parser.add_argument("-config_name",type=str,required=True,help="Name of the configuration file")
     parser.add_argument('-exception_scenes', nargs='+', default=[], help='Array of scnees that will not be validated')
-   
+    parser.add_argument('-dry', action='store_true', help='Dry run, do only create sbatch scripts, not submit them to cluster.')
 
     args = parser.parse_args()
-    start_scene_cross_validation(args.dataset,args.video_event_name,args.video_rgb_name,args.config_name,args.exception_scenes)
+    if args.dry:
+        print("Dry run, no jobs submitted")
+        dry_run = 1
+    else:
+        dry_run = 0
+    start_scene_cross_validation(args.dataset,args.video_event_name,args.video_rgb_name,args.config_name,args.exception_scenes,dry_run)
