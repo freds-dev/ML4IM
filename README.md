@@ -1,5 +1,6 @@
 # ML4IM
-Study project - machine learning for insect monitoring
+## Study project - machine learning for insect monitoring
+This the repository for the study project ML4IM at the Institute of Geoinformatics (University Muenster). Our project report can be found [here](https://github.com/freds-dev/ML4IM/blob/main/report.pdf). Latex source code for building the report is published within `./report` directory. Python code for preparing and running or experiments can be found in `./code` directory, while scripts for evaluation are stored in `./R`. Monitoring running experiments can be done via [WandB](https://wandb.ai/uni-ms/). The best performing resulting models are published at releases page of this repository. Below you find an summary of the conducted experiments!  
 
 ## Experiments
 
