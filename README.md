@@ -334,7 +334,7 @@ options:
 ### Scripts for evaluating and visualizing results of trainings (`./R`)
 
 #### `generate_combined_results.R`
-This script is intended to combine multiple CSV files located in the "./results" directory. It calculates a weighted average of two specific columns ("metrics.mAP50.B." and "metrics.mAP50.95.B.") in each CSV file, finds the row with the maximum value, and combines this row from each file into a single dataframe called "res." The script then writes this combined dataframe to a CSV file named "combined-results.csv" in the same directory. Additionally, it prints out each row as it is processed and the total number of rows in the combined dataframe.
+This script combines multiple CSV files located in the "./results" directory. It calculates a weighted average of two specific columns ("metrics.mAP50.B." and "metrics.mAP50.95.B.") in each CSV file, finds the row with the maximum value, and combines this row from each file into a single dataframe called "res." The script then writes this combined dataframe to a CSV file named "combined-results.csv" in the same directory.
 
 #### `generate_split_results.R`
 This script performs the following tasks:
@@ -361,10 +361,8 @@ This script performs the following operations:
 7. Performs a Friedman test to analyze whether there are differences in the 'metrics.precision.B.' values among the preprocessing methods, accounting for the repeated measures (indicated by the 'id' variable).
 8. Prints the results of the Friedman test.
 
-Please note that there is a commented-out section related to `preprocessing_2`, which is not used in subsequent analysis. Additionally, some variable names (e.g., 'preprocessing_group') used in the script are assumed to be defined elsewhere in the code.
-
 #### `create_cross_validation_results_y7.R`
-This script appears to perform the following tasks:
+This script performs the following tasks:
 
 1. It defines a function `read_yolov7` to read data from a YOLOv7 results file.
 2. It reads YOLOv7 results files located in a specified directory (`project`) and stores the data in a list of data frames (`result_list`), where each element corresponds to a file.
@@ -372,8 +370,6 @@ This script appears to perform the following tasks:
 4. It defines a function `transform_epoch` to process the 'epoch' column of the selected data frame to extract numerical values.
 5. It renames columns in the selected data frame to match specific naming conventions.
 6. It adds columns for learning rates (`lr.pg0`, `lr.pg1`, `lr.pg2`) and writes the resulting data frame to a CSV file in the "results/cross-validation" directory with the project name as the filename.
-
-This script seems to be part of a data processing pipeline for YOLOv7 results, where it reads, selects, transforms, and organizes data for further analysis or visualization.
 
 #### `generate_box_plots.R`
 This script performs the following tasks:
@@ -389,9 +385,7 @@ This script performs the following tasks:
 This script is designed to visualize the distribution of certain metrics (e.g., precision, recall, mAP@0.5, etc.) across different experiments, helping to analyze and compare the performance of different configurations or setups.
 
 #### `plot_overview_results.R`
-This script defines a function `create_boxplot` to generate box plots using ggplot2. It then proceeds to create box plots to visualize the distribution of different metrics across various experiments.
-
-Here's a summary of what the script does:
+This script generates box plots using ggplot2. It then creates box plots to visualize the distribution of different metrics across various experiments.
 
 1. Defines a function `create_boxplot` to create box plots.
 2. Defines experiment names mapping.
@@ -403,10 +397,8 @@ Here's a summary of what the script does:
 8. Creates a box plot using the `create_boxplot` function, specifying the value column, category columns, title, and metric labels.
 9. Saves the generated box plot as a PNG file in the "visualizations/boxplots" directory.
 
-This script is designed to provide an overview of experiment results by visualizing the distribution of various metrics across different experiments.
-
 #### `paired_t_test.R`
-This script seems to compare the fitness scores of two different preprocessing methods using a one-sided paired t-test. Here's a summary of the script:
+This script compares the fitness scores of two different preprocessing methods using a one-sided paired t-test.
 
 1. It defines paths to two CSV files containing the cross-validation results for two different preprocessing methods: `preprocessing_1_path` and `preprocessing_2_path`.
 2. It specifies a list of parameters to compare, including precision, recall, mAP@0.5, mAP@0.5-0.95, and fitness.
@@ -415,10 +407,8 @@ This script seems to compare the fitness scores of two different preprocessing m
 5. It conducts a one-sided paired t-test, testing the hypothesis that the fitness score for preprocessing method 1 is greater than that for preprocessing method 2 (`alternative = "greater"`).
 6. It prints the results of the t-test.
 
-Overall, this script is designed to statistically compare the fitness scores of two different preprocessing methods to determine if one method performs significantly better than the other.
-
 #### `paired_t_test_overview.R`
-This script is designed to compare multiple CSV files containing cross-validation results by performing a pairwise t-test on a weighted combination metric derived from each file. Here's a summary of what the script does:
+This compares multiple CSV files containing cross-validation results by performing a pairwise t-test on a weighted combination metric derived from each file.
 
 1. **Load Necessary Libraries**: It loads the tidyverse and broom libraries for data manipulation and statistical analysis.
 
@@ -431,12 +421,7 @@ This script is designed to compare multiple CSV files containing cross-validatio
    - It specifies the directory containing the CSV files (`dir_location`) and calls the `compare_csv_files` function to compare the CSV files within that directory.
    - The heatmap generated by the `compare_csv_files` function visualizes the p-values resulting from the pairwise t-tests. Lower p-values indicate a more significant difference between the compared datasets.
 
-Overall, this script provides a systematic way to compare multiple sets of cross-validation results, allowing users to assess the statistical significance of differences between the performance metrics derived from different experiments or configurations.
-
 #### `pairwise_t_tests.R`
-The provided R script is aimed at conducting pairwise t-tests on a set of CSV files containing cross-validation results, followed by the generation of LaTeX code to create a table displaying the results.
-
-Here's a summary of what the script does:
 
 1. **Load Libraries**: The script starts by loading the necessary libraries, including `stringr`, `dplyr`, `kableExtra`, and `tibble`.
 
@@ -457,10 +442,8 @@ Here's a summary of what the script does:
 6. **Print LaTeX Code**:
    - The generated LaTeX code is printed to the console.
 
-The resulting LaTeX code can be used to create a table in a LaTeX document, providing a concise summary of the pairwise t-test results between different experiments based on their fitness metrics.
-
 #### `print_cross_validation_overview.R`
-The script you provided reads CSV files containing cross-validation results from a specified directory, calculates a fitness metric based on the weighted sum of `metrics.mAP50.95.B.` and `metrics.mAP50.B.`, and then summarizes statistics for a specific metric across different experiments. Here's a breakdown of what the script does:
+The reads CSV files containing cross-validation results from a specified directory, calculates a fitness metric based on the weighted sum of `metrics.mAP50.95.B.` and `metrics.mAP50.B.`, and then summarizes statistics for a specific metric across different experiments.
 
 1. **Load Necessary Libraries**: The script loads the `stringr` library.
 
@@ -479,10 +462,8 @@ The script you provided reads CSV files containing cross-validation results from
 
 7. **Generate Summary Statistics**: For each experiment, the script calculates and prints the mean, maximum, minimum, and median values of the selected metric (`metrics.mAP50.95.B.`).
 
-This script allows for an analysis of the performance of different experiments based on the `metrics.mAP50.95.B.` metric, providing summary statistics for each experiment.
-
 #### `plot_fitness.R`
-The script you provided performs the following tasks:
+The script performs the following tasks:
 
 1. **Set Directory and List Files**: It sets the directory containing the CSV files and lists all files in that directory.
 
