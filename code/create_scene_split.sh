@@ -6,7 +6,7 @@ if [ "$6" -eq -1 ]; then
     echo "No dependency"
     if [ "$7" -eq 1]; then
         id=$(sbatch sbatch/pp/$1/$2.sh| { read text; echo ${text##* };})
-    if
+    fi
 else
     echo "Dependency: $6"
     if [ "$7" -eq 1]; then
@@ -18,7 +18,7 @@ python utils/build_sbatch.py --script_location sbatch/train/$1/$2.sh --gpu_datas
 if [ "$7" -eq 1]; then
 
     sbatch --dependency=afterok:$id sbatch/train/$1/$2.sh
-if
+fi
 echo "\n\n\n"
 echo $id
 

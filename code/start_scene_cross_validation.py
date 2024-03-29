@@ -3,7 +3,7 @@ import argparse
 
 from utils.scene_helper import get_all_scenes
 
-def start_scene_cross_validation(dataset_name,video_event_name,video_rgb_name,config_name, exception_scenes = []):
+def start_scene_cross_validation(dataset_name,video_event_name,video_rgb_name,config_name, exception_scenes = [],dry_run=0):
     scenes = get_all_scenes()
     
     for scene in exception_scenes:
@@ -17,7 +17,7 @@ def start_scene_cross_validation(dataset_name,video_event_name,video_rgb_name,co
         # Run the Bash script with arguments
         if id is None:
             id = -1
-        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id)], dry_run).decode('utf-8').strip().split("\n")[-1]
+        id = subprocess.check_output(['bash', "create_scene_split.sh", dataset_name, scene,video_event_name,video_rgb_name,config_name,str(id),str(dry_run)] ).decode('utf-8').strip().split("\n")[-1]
         
         
 if __name__ == "__main__":
