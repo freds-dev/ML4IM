@@ -630,7 +630,7 @@ def main():
     parser.add_argument('--data', type=str, default='data/coco.yaml', help='data.yaml path')
     parser.add_argument('--hyp', type=str, default='/home/j/jdanel/codespace/ML4IM/code/yolov7_custom/data/hyp.scratch.p5.yaml', help='hyperparameters path')
     parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--batch-size', type=int, default=16, help='total batch size for all GPUs') #TODO: Change default to 256
+    parser.add_argument('--batch-size', type=int, default=32, help='total batch size for all GPUs') #TODO: Change default to 256
     parser.add_argument('--img-size', nargs='+', type=int, default=[1280, 1280], help='[train, test] image sizes') # TODO: Change default to 1280,1280
     parser.add_argument('--rect', action='store_true', help='rectangular training')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
