@@ -119,7 +119,6 @@
 \usepackage{pgfplots}
 \pgfplotsset{width=\linewidth,compat=1.9}
 \usepackage{subcaption} % for subfigures
-\usepackage{todonotes}
 \usepackage{multirow}
 \usepackage{csvsimple}
 \usepackage{longtable}
@@ -231,7 +230,7 @@
 
 \section{Introduction}\label{ch01:intro}
 
-The decline of insect populations poses a significant threat to global ecosystems and human livelihoods. As these diminutive creatures play pivotal roles in pollination, nutrient cycling, and pest control, their dwindling numbers could trigger cascading effects throughout food webs, leading to ecosystem instability and agricultural challenges. Amidst growing concerns over insect declines, there is an urgent need for innovative methodologies to monitor and understand insect populations in diverse environments.\\
+The decline of insect populations poses a significant threat to global ecosystems and human livelihoods. As these diminutive animals play pivotal roles in pollination, nutrient cycling, and pest control, their dwindling numbers could trigger cascading effects throughout food webs, leading to ecosystem instability and agricultural challenges. Amidst growing concerns over insect declines, there is an urgent need for innovative methodologies to monitor and understand insect populations in diverse environments.\\
 Our study project, \textit{"Machine Learning meets Insect Monitoring: Detecting Tiny Objects in Cluttered Natural Outdoor Environments"}, addresses this pressing issue by leveraging advanced technologies at the intersection of machine learning and insect ecology. We aim to develop novel approaches for quantifying insect presence in complex outdoor settings.
 
 \subsection{Context and Motivation}
@@ -252,37 +251,17 @@ To address the problem of significant quantity of photos that lack useful inform
 However, challenges remain in accurately capturing and saving insect imagery due to factors such as small object size, fast insect motion, cluttered scenes, and dynamic backgrounds.
 Previous work by \citeauthor{thiele2021towards} has demonstrated progress towards visual insect camera traps.\\
 They proposed a methodology that incorporates temporal cues, specifically using the HSV* color space, to improve insect detection accuracy. Their quantitative evaluation of detection networks, including YoloV3, Faster RCNN, and MobileNet, demonstrated promising results in terms of average precision, precision, recall, and computational efficiency \citep{thiele2021towards}.\\
-To address the limitations mentioned above, researchers have explored alternative technologies such as Dynamic Vision Sensors (DVS). DVS offers several advantages over conventional RGB cameras, as it is specifically designed to detect motion events with high sensitivity, ultra-fast response times, and low energy consumption \citep{delbruck2016neuromorophic}. The utilization of DVS technology holds promise for enhancing insect tracking capabilities within the Smart Insect Camera Trap. 
+To address the limitations mentioned above, researchers have explored alternative technologies such as DVS. DVS offers several advantages over conventional RGB cameras, as it is specifically designed to detect motion events with high sensitivity, ultra-fast response times, and low energy consumption \citep{delbruck2016neuromorophic}. The utilization of DVS technology holds promise for enhancing insect tracking capabilities within the Smart Insect Camera Trap. 
 Building upon this foundation, \citeauthor{Gebauer_2024_WACV} extend the capabilities of insect camera traps by introducing DVS-based sensing in combination with a real-time small object detection algorithm, demonstrating superior detection performance and lower processing times compared to state-of-the-art deep learning models \citep{Gebauer_2024_WACV}.
 
 \section{Fundamentals}
 
-\subsection{Object Detection Measurements}
-
-Confusion matrices (Table \ref{tab:confusion_matrix}) are frequently employed in object detection tasks to assess the effectiveness of our model. This matrix facilitates the evaluation of our model's performance in accurately identifying true positives (correctly detected instances), false positives (incorrectly detected instances), true negatives (correctly rejected instances), and false negatives (missed detections).
-
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{@{}cccc@{}}
-    & \multicolumn{2}{c}{\textbf{Predicted}} \\ \cmidrule(l){2-3} 
-    \textbf{Actual} & \textbf{Positive} & \textbf{Negative} \\ \midrule
-    \textbf{Positive} & TP & FP \\
-    \textbf{Negative} & FN & TN \\ \bottomrule
-  \end{tabular}
-  \caption{Confusion matrix explaining true positives (TP), false positives (FP), false negatives (FN), and true negatives (TN).}
-  \label{tab:confusion_matrix}
-\end{table}
-From this matrix, we derive important metrics like \textit{Precision} ($\frac{TP}{TP +FP}$) and \textit{Recall} ($\frac{TP}{TP +FN}$) \citep{aghdam2017guide}, valuing all detections with confidence $>0.25$ and $IoU > 0.45$ as $TP$, where confidence represents the model's confidence in the detection and \textit{IoU} is defined for calculated bounding box $B_p$ and expected bounding box $B_e$ as: $\frac{B_p \cup B_e}{B_p \cap B_e} = \frac{\text{area of overlap}}{\text{area of union}}$ \citep{szeliski2022computer}. \\
-\textit{Mean Average Precision} (mAP) is calculated as the area under the Precision-Recall Curve \citep{everingham2010pascal}. The Precision-Recall Curve is calculated by examining all confidence thresholds and calculating Precision and Recall. \\
-Additionally, we introduce the concept of fitness to assess the model's performance comprehensively. The fitness metric is defined as the best fitness over all epochs and is calculated as follows:
-\[ \text{fitness} = 0.1 \times \text{mAP@0.5} + 0.9 \times \text{mAP@0.5-0.95} \] Here, mAP@0.5 represents the mean average precision at an IoU threshold of 0.5, while mAP@0.5-0.95 represents the mean average precision across IoU thresholds ranging from 0.5 to 0.95. This composite metric provides a balanced assessment of the model's performance across different IoU thresholds, with greater emphasis placed on higher IoU thresholds to ensure robustness in object detection.
-
 \subsection{Hardware and Camera Setup}
 \label{ch:hardware-setup}
-The insect monitoring system (see Figure \ref{fig:dvs-system}) relies on a carefully designed hardware setup comprising two key components: a conventional full-frame RGB camera and a Dynamic Vision Sensor (DVS).
+The insect monitoring system (see Figure \ref{fig:dvs-system}) relies on a carefully designed hardware setup comprising two key components: a conventional full-frame RGB camera and a DVS.
 
 \subsubsection{RGB Camera}
-The RGB camera, a Basler a2A1920-160ucBAS with a resolution of 2.3 MP and a frame rate of 160 fps, is equipped with a Kowa LM16JC1MS 16mm/F1.4 C-Mount lens. This high-resolution RGB camera captures visual data at a rapid frame rate of 160 fps, providing detailed imagery of the monitored environment.
+The RGB camera, a Basler a2A1920-160ucBAS with a resolution of 2.3 MP, is equipped with a Kowa LM16JC1MS 16mm/F1.4 C-Mount lens. This high-resolution RGB camera captures visual data at a rapid frame rate of 160 fps, providing detailed imagery of the monitored environment.
 
 \subsubsection{Dynamic Vision Sensor}
 The DVS operates on neuromorphic vision principles, detecting events triggered by local brightness changes above a threshold. It offers high-temporal-resolution event data suitable for tracking fast-moving insects in cluttered and dynamic environments. The DVS used is a Prophesee EVK4 connected with a Trigger Connector.
@@ -312,7 +291,7 @@ In 2016, a new convolutional neural network (CNN) named YOLO (You Only Look Once
 \end{figure}
 
 \subsection{Preprocessing}
-
+\label{ch:pps}
 Since we will be manipulating the original video streams obtained from the RGB and DVS camera, we will now discuss some fundamental preprocessing techniques.
 
 \subsubsection{Background Subtraction}
@@ -340,6 +319,26 @@ For transformation from RGB to HSV a classical approach is used, to transform th
     \text{Value (V)} &= \text{Max}
 \end{aligned}
 \]
+
+\subsection{Object Detection Measurements}
+
+Confusion matrices (Table \ref{tab:confusion_matrix}) are used in object detection tasks to assess the effectiveness of a model. This matrix facilitates the evaluation of our model's performance in identifying true positives (correct detections), false positives (incorrect detection), true negatives (correct rejections), and false negatives (missed detections).
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{@{}cccc@{}}
+    & \multicolumn{2}{c}{\textbf{Predicted}} \\ \cmidrule(l){2-3} 
+    \textbf{Actual} & \textbf{Positive} & \textbf{Negative} \\ \midrule
+    \textbf{Positive} & TP & FP \\
+    \textbf{Negative} & FN & TN \\ \bottomrule
+  \end{tabular}
+  \caption{Confusion matrix explaining true positives (TP), false positives (FP), false negatives (FN), and true negatives (TN).}
+  \label{tab:confusion_matrix}
+\end{table}
+From this matrix, we derive important metrics like \textit{Precision} ($\frac{TP}{TP +FP}$) and \textit{Recall} ($\frac{TP}{TP +FN}$) \citep{aghdam2017guide}, valuing all detections with confidence $>0.25$ and $IoU > 0.45$ as $TP$, where confidence represents the model's confidence in the detection and \textit{IoU} is defined for calculated bounding box $B_p$ and expected bounding box $B_e$ as: $\frac{B_p \cup B_e}{B_p \cap B_e} = \frac{\text{area of overlap}}{\text{area of union}}$ \citep{szeliski2022computer}. \\
+\textit{Mean Average Precision} (mAP) is calculated as the area under the Precision-Recall Curve \citep{everingham2010pascal}. The Precision-Recall Curve is calculated by examining all confidence thresholds and calculating Precision and Recall. \\
+Additionally, we introduce the concept of fitness to assess the model's performance comprehensively. The fitness metric is defined as the best fitness over all epochs and is calculated as follows:
+\[ \text{fitness} = 0.1 \times \text{mAP@0.5} + 0.9 \times \text{mAP@0.5-0.95} \] Here, mAP@0.5 represents the mean average precision at an IoU threshold of 0.5, while mAP@0.5-0.95 represents the mean average precision across IoU thresholds ranging from 0.5 to 0.95. This composite metric provides a balanced assessment of the model's performance across different IoU thresholds, with greater emphasis placed on higher IoU thresholds to ensure robustness in object detection.
 
 
 \section{Methods}
@@ -462,10 +461,10 @@ For transformation from RGB to HSV a classical approach is used, to transform th
 \label{fig:workflow}
 \end{figure}
 
-This section delves into the methods employed throughout our research and provides a rationale for their selection. To clarify essential terms: a "scene" is the setup of the camera within the specific environment, while a "video" consists of smaller segments taken from scenes. Our experimental design encompasses two primary approaches: the DVS only experiment, wherein solely DVS images are used for the detection task, and the RGB + DVS experiment, which involves the utilization of a merged image of both input types for the detection task. To assess the robustness of our experiments, we implemented a cross-validation strategy following the leave-one-out principle. Each scene was designated as validation data for one split, resulting in a distribution of performance quality scores that facilitates meaningful statistical comparisons. A key part of our work involves exploring the impact of different computer vision preprocessings on raw data. Through these experiments, we sought to discern potential enhancements in the detection task performance. The overall workflow of our experiments is visualized in Figure \ref{fig:workflow}, and the subsequent sections will expound upon the applied methods, following the structured framework illustrated in the diagram.
+This section delves into the methods employed throughout our research and provides a rationale for their selection. To clarify essential terms: a "scene" is the setup of the camera within the specific environment, while a "video" consists of smaller segments taken from scenes. Our experimental design encompasses two primary approaches: The DVS only experiment, wherein solely DVS images are used for the detection task, and the RGB + DVS experiment, which involves the utilization of a merged image of both input types for the detection task. To assess the robustness of our experiments, we implemented a cross-validation strategy following the leave-one-out principle. Each scene was designated as validation data for one split, resulting in a distribution of performance quality scores that facilitates meaningful statistical comparisons. A key part of our work involves exploring the impact of different computer vision preprocessings on raw data. Through these experiments, we sought to discern potential enhancements in the detection task performance. The overall workflow of our experiments is visualized in Figure \ref{fig:workflow}, and the subsequent sections will expound upon the applied methods, following the structured framework illustrated in the diagram.
 
 
-Initially, manual labeling of videos and individual preprocessing procedures are conducted for both RGB and DVS videos,by labeling the DVS stream and mapping the labels to the RGB stream (depicted as \drawNumberedCircleMacro{col_step1}{1}{white}). Then we construct a  dataset that can be used within the YOLO environment for each validation split, with an additional step involving the combination of DVS and RGB data (\drawNumberedCircleMacro{col_step2}{2}{black}). The third step involves employing YOLO for training a model and generating validation results (\drawNumberedCircleMacro{col_step3}{3}{black}). Finally, in the fourth step (\drawNumberedCircleMacro{col_step4}{4}{white}), the study filters the best scores for each validation split and proceeds to compare the distributions of different preprocessing techniques.
+Initially, manual labeling of videos and individual preprocessing procedures are conducted for both RGB and DVS videos, by labeling the DVS stream and mapping the labels to the RGB stream (depicted as \drawNumberedCircleMacro{col_step1}{1}{white}). Then we construct a  dataset that can be used within the YOLO environment for each validation split, with an additional step involving the combination of DVS and RGB data (\drawNumberedCircleMacro{col_step2}{2}{black}). The third step involves employing YOLO for training a model and generating validation results (\drawNumberedCircleMacro{col_step3}{3}{black}). Finally, in the fourth step (\drawNumberedCircleMacro{col_step4}{4}{white}), the study filters the best scores for each validation split and proceeds to compare the distributions of different preprocessing techniques.
 
 \subsection{Preparing the data}
 The used dataset was conducted at the Botanical Garden of Mu\"nster. The filming took place from September 28, 2023, to October 13, 2023. The filming process utilized a dual camera setup, as detailed in Section \ref{ch:hardware-setup}. Ten distinct scenes were captured during this period, each scene generating videos comprising a maximum of 4000 frames. In sum, the dataset comprises 97,077 frames. 
@@ -476,6 +475,46 @@ The labeling process was facilitated using the Labelbox tool\footnote{\url{https
 
 \subsubsection{Preprocessing}
 Video processing was carried out in a stacked format (DVS + RGB), as illustrated in Figure \ref{fig:workflow} at the initial node. This approach provided the advantage of applying the same preprocessing steps to both DVS and RGB data if needed. Given that the DVS input comprises only one-channel information, distinct preprocessing steps were employed on different channels. Furthermore, a sequential preprocessing workflow was implemented. The implementation was done using Python and the framework OpenCV \citep{bradski2000opencv} which is capable of modifying images on pixel base.
+
+In Section \ref{ch:pps}, each preprocessing concept is introduced, while here the methodology behind temporal filtering gets explained. The specific sequence of preprocessing steps employed for a given experiment will be elaborated upon in the results section.
+
+\paragraph{Temporal Filtering}
+\label{ch:pp-tf}
+In our research, we employed a temporal filtering technique to process single-channel frame streams. This technique is governed by the following formula:
+
+\[
+out_i = {\left(1 - \frac{1}{fs}\right)} \times out_{i-1} + \frac{1}{fs \times in_i} 
+\] 
+Here, $fs$ denotes the filter size, indicating the weighting of previous frames considered in the filtering process. Throughout our experiments, we set $fs = 5$. The input to the filtering process, denoted as $in_i$, represents the selected input channel $k$ of the $i$th frame of the input video, structured as $M_{h\times w}$, where $h$ and $w$ correspond to the frame's height and width, respectively. The resulting output, $out_i$, also maintains the same dimensions, $M_{h\times w}$. \\
+For initialization, we adopted the following configuration: \[
+out_0 = \begin{bmatrix}
+0 & 0 & \cdots & 0 \\
+0 & 0 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & 0 \\
+\end{bmatrix}_{h \times w}
+\] This approach involves incorporating both, the current and the previous frames and accumulating them. Temporal dependent preprocessings are a common approach to increase the accuracy of insect detection models \cite{thiele2021towards}. The approach we employ diverges from a linear methodology; instead, it assigns significantly higher weights to the current and more recent frames compared to those further in the past. Specifically, the weighting scheme entails assigning a weight of $\frac{1}{fs}$ to the current frame, while the $p$-th previous frame (indexed as $i-p$) contributes to the output frame with a weight calculated as ${\left(1-\frac{1}{fs}\right)}^p \times \frac{1}{fs}$. This weighting mechanism ensures that the influence of past frames diminishes exponentially as they recede into the past. Consequently, frames closer to the present exert a stronger influence on the output frame, aligning with the temporal dynamics of the video stream (see Figure \ref{fig:tf}). We opted for $fs = 5$ to have a balance between maintaining a significant influence from frames with higher $p$ values and assigning considerably higher importance to frames nearer in time (see Figure \ref{fig:tf}). Such an approach aims to enrich the current frame with information from the recent past, enabling the capture of motion even when the subject remains static. This capability proves particularly valuable, for instance, in scenarios where insects exhibit minimal movement, ensuring that past motion remains accounted for.
+
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[
+axis lines = left,
+    xlabel = \(p\),
+    ylabel = {\(w(p)\)},
+]
+\addplot[color=black,domain=0:50]{(2/3)^x*1/3};
+\addlegendentry{\(fs = 3\)}
+\addplot[color=red,domain=0:50]{(4/5)^x*1/5};
+\addlegendentry{\(fs = 5\)}
+\addplot[color=blue,domain=0:50]{(9/10)^x*1/10};
+\addlegendentry{\(fs = 10\)}
+\addplot[color=green,domain=0:50]{(19/20)^x*1/20};
+\addlegendentry{\(fs = 20\)}
+\end{axis}
+\end{tikzpicture}
+\caption{Weights used in temporal filtering for different $fs$: $w(p) = {\left(1-\frac{1}{fs}\right)}^p \times \frac{1}{fs}$. Describing the decreasing impact of the previous frame to the output frame in temporal filtering approach.}
+\label{fig:tf}
+\end{figure}
 
 \begin{figure}[htp]
   \centering
@@ -501,48 +540,6 @@ Video processing was carried out in a stacked format (DVS + RGB), as illustrated
   \end{subfigure}
   \caption{Visual depiction of various preprocessing steps applied to the original stacked data set.}
   \label{fig:preprocessings}
-\end{figure}
-In the subsequent sections, each preprocessing method is introduced. The specific sequence of preprocessing steps employed for a given experiment will be elaborated upon in the results section.
-
-\paragraph{Temporal Filtering}
-\label{ch:pp-tf}
-In our research, we employed a temporal filtering technique to process single-channel frame streams. This technique is governed by the following formula:
-
-\[
-out_i = {\left(1 - \frac{1}{fs}\right)} \times out_{i-1} + \frac{1}{fs \times in_i} 
-\] 
-Here, $fs$ denotes the filter size, indicating the weighting of previous frames considered in the filtering process. Throughout our experiments, we set $fs = 5$. The input to the filtering process, denoted as $in_i$, represents the selected input channel $k$ of the $i$th frame of the input video, structured as $M_{h\times w}$, where $h$ and $w$ correspond to the frame's height and width, respectively. The resulting output, $out_i$, also maintains the same dimensions, $M_{h\times w}$. \\
-For initialization, we adopted the following configuration:
-
-\[
-out_0 = \begin{bmatrix}
-0 & 0 & \cdots & 0 \\
-0 & 0 & \cdots & 0 \\
-\vdots & \vdots & \ddots & \vdots \\
-0 & 0 & \cdots & 0 \\
-\end{bmatrix}_{h \times w}
-\]
-This approach involves incorporating both, the current and the previous frames and accumulating them. Temporal dependent preprocessings are a common approach to increase the accuracy of insect detection models \cite{thiele2021towards}. The approach we employ diverges from a linear methodology; instead, it assigns significantly higher weights to the current and more recent frames compared to those further in the past. Specifically, the weighting scheme entails assigning a weight of $\frac{1}{fs}$ to the current frame, while the $p$-th previous frame (indexed as $i-p$) contributes to the output frame with a weight calculated as ${\left(1-\frac{1}{fs}\right)}^p \times \frac{1}{fs}$. This weighting mechanism ensures that the influence of past frames diminishes exponentially as they recede into the past. Consequently, frames closer to the present exert a stronger influence on the output frame, aligning with the temporal dynamics of the video stream (see Figure \ref{fig:tf}). We opted for $fs = 5$ to have a balance between maintaining a significant influence from frames with higher $p$ values and assigning considerably higher importance to frames nearer in time (see Figure \ref{fig:tf}). Such an approach aims to enrich the current frame with information from the recent past, enabling the capture of motion even when the subject remains static. This capability proves particularly valuable, for instance, in scenarios where insects exhibit minimal movement, ensuring that past motion remains accounted for.
-
-\begin{figure}[H]
-\begin{tikzpicture}
-\begin{axis}[
-axis lines = left,
-    xlabel = \(p\),
-    ylabel = {\(w(p)\)},
-]
-\addplot[color=black,domain=0:50]{(2/3)^x*1/3};
-\addlegendentry{\(fs = 3\)}
-\addplot[color=red,domain=0:50]{(4/5)^x*1/5};
-\addlegendentry{\(fs = 5\)}
-\addplot[color=blue,domain=0:50]{(9/10)^x*1/10};
-\addlegendentry{\(fs = 10\)}
-\addplot[color=green,domain=0:50]{(19/20)^x*1/20};
-\addlegendentry{\(fs = 20\)}
-\end{axis}
-\end{tikzpicture}
-\caption{Weights used in temporal filtering for different $fs$: $w(p) = {\left(1-\frac{1}{fs}\right)}^p \times \frac{1}{fs}$. Describing the decreasing impact of the previous frame to the output frame in temporal filtering approach.}
-\label{fig:tf}
 \end{figure}
 
 \subsection{Setup cross validation}
@@ -621,7 +618,7 @@ For combining RGB and DVS stream we used a four channel approach with an additio
 Here, we used all four possible input streams as the input to test the performance of the original data.
 \subsubsection{DVS\_DVS--BS\_DVS--BS--TF\_RGB--BS (10)}
 We per\-formed an experiment by combining the best DVS stream preprocessing approach with the best approach tested on the RGB data\footnote{This was performed and validated by another project group.}
-\begin{table}[h]
+\begin{table}[ht]
 \begin{tabular}{llc|r}
                                 &                      & \textbf{ID} & \textbf{Name}   \\ \hline
 \multirow{8}{*}{\rotatebox[origin=c]{90}{3-Channels}} & \multirow{4}{*}{\rotatebox[origin=c]{90}{RGB}} & 01                           & DVS\_DVS\_DVS                    \\
@@ -734,7 +731,7 @@ x      y1         y2         y3         y4         y5         y6        y7      
         
         \end{axis}
     \end{tikzpicture}
-    \caption{Evolution of fitness values along the epochs, in cross-validation of experiment 04.}
+    \caption{Evolution of fitness values along the epochs, in cross-validation of Experiment 04.}
     \label{fig:fitness-experiment04}
 \end{figure*}
 
@@ -745,7 +742,7 @@ The outcomes of various experimental configurations highlight the variability in
 Experiment 08 resulted in a mean mAP@0.5--0.95 of 0.053, with values ranging from 0.013 to 0.140 and a median of 0.033. Conversely, Experiment 04 displayed a slightly higher mean mAP@0.5--0.95 of 0.059, with values ranging from 0.013 to 0.183 and a median of 0.041. Similarly, Experiment 06 showed a mean mAP@0.5--0.95 of approximately 0.053, with values ranging from 0.012 to 0.155 and a median of 0.042, while Experiment 02 yielded a slightly higher mean mAP@0.5--0.95 of 0.060, with values ranging from 0.016 to 0.174 and a median of 0.047 (refer to Figure \ref{fig:results:overview}). A notable difference was observed between Experiment 10 and Experiment 08/04 configurations. The former, integrating RGB preprocessing, demonstrated a mean mAP@0.5--0.95 of approximately 0.059, with values ranging from 0.012 to 0.183 and a median of 0.037, compared to the latter, which exhibited mean mAP@0.5--0.95 values of around 0.058/0.059. Their respective values ranged from 0.164/0.184 to 0.012/0.014, with medians of 0.041/0.048 (refer to Figure \ref{fig:results:overview}). This suggests that RGB preprocessing may exert a more pronounced positive impact on mAP@0.5--0.95 compared to HSV preprocessing within this experimental context. Furthermore, when comparing Experiment 01 and Experiment 05 configurations, marginal differences in mean mAP@0.5--0.95 were observed, with values of approximately 0.052 and 0.056 respectively. The maximum, minimum, and median values also exhibited negligible discrepancies between these configurations. Lastly, Experiment 09 exhibited the lowest mean mAP@0.5--0.95 among all configurations, approximately 0.036, with values ranging from 0.002 to 0.120 and a median of 0.019. This suggests that RGB preprocessing may have a less pronounced positive effect on mAP@0.5--0.95 compared to configurations solely within the DVS framework.
 
 \subsection{Comparison}
-\begin{table}[h]
+\begin{table}[ht]
 \begin{tabular}{c|*{9}{c}}
  &  10 & 02 & 03 & 08 & 01 & 06 & 07 & 05 & 09 \\
 \hline
@@ -764,17 +761,30 @@ Experiment 08 resulted in a mean mAP@0.5--0.95 of 0.053, with values ranging fro
 \label{tbl:result-comparison}
 \end{table}
 
-Experiment 04 emerges as the top performer overall, boasting the highest mean fitness value among all experiments. Notably, it surpasses the original DVS stream (Experiment 01) with statistical significance. However, the introduction of RGB background subtraction in Experiment 04 does not yield a significant impact, as evidenced by the comparison with Experiment 10 in Table \ref{tbl:result-comparison}. Conversely, the amalgamation of the original RGB and DVS streams in Experiment 09 demonstrates inferior performance compared to all other experiments, as indicated in Table \ref{tbl:result-comparison}. Furthermore, the incorporation of temporal filtering to the DVS stream, as observed in experiment 02, leads to a significant enhancement in results relative to experiment 01. While overall HSV appears to underperform compared to corresponding RGB experiments, RGB does not exhibit significantly higher means, except in the case of experiments 02 and 06.
+Experiment 04 emerges as the top performer overall, boasting the highest mean fitness value among all experiments. Notably, it surpasses the original DVS stream (Experiment 01) with statistical significance. However, the introduction of RGB background subtraction in Experiment 04 does not yield a significant impact, as evidenced by the comparison with Experiment 10 in Table \ref{tbl:result-comparison}. Conversely, the amalgamation of the original RGB and DVS streams in Experiment 09 demonstrates inferior performance compared to all other experiments, as indicated in Table \ref{tbl:result-comparison}. Furthermore, the incorporation of temporal filtering to the DVS stream, as observed in Experiment 02, leads to a significant enhancement in results relative to Experiment 01. While overall HSV appears to underperform compared to corresponding RGB experiments, RGB does not exhibit significantly higher means, except in the case of Experiments 02 and 06.
 
 \section{Discussion}
-- Using RGB backgrouund subtraction as additional information, has no impact.
-    - Further analysis on RGB impacts needs to implemented. \\
+\begin{figure}
+    \centering
+   \begin{subfigure}{\linewidth}
+       \includegraphics[width=\linewidth]{figures/results/label2.png}
+       \caption{Labels (Ground Truth)}
+   \end{subfigure}\\ 
+   \begin{subfigure}{\linewidth}
+       \includegraphics[width=\linewidth]{figures/results/pred2.png}
+       \caption{Prediction}
+   \end{subfigure}
+   \caption{Comparison of labels vs. prediction}
+   \label{fig:labelVsPred}
+\end{figure}
+% - Using RGB backgrouund subtraction as additional information, has no impact.
+%     - Further analysis on RGB impacts needs to implemented. \\
 
 In this study, we explored the feasibility of detecting tiny insects in cluttered environments using RGB and DVS-event stream images. The results we found not only show that this kind of detection is possible, but they also show how complex environments affect the complex link between preprocessing methods and detection success.\\
 The use of temporal-based preprocessing approaches appeared as an important component in our research. By leveraging temporal filtering, we were able to isolate non-moving insects within DVS streams, thereby reducing the impact of background noise and enhancing the clarity of insect-related motion patterns. This finding underscores the importance of considering temporal dynamics in the preprocessing pipeline for insect detection tasks.\\
 Our experiments utilizing background subtraction techniques produced promising results. By applying background subtraction, we successfully delineated moving insects from stationary background elements, such as plants. This preprocessing step not only facilitated the extraction of relevant motion features but also contributed to the mitigation of false positives, thus improving overall detection accuracy.\\
 However, despite the efficacy of temporal-based and background subtraction preprocessings, our analysis revealed the susceptibility of detection outcomes to various environmental factors. Factors such as the size of insects, the presence of non-insect objects in the scene, and the speed of movement of these objects exerted significant influences on detection performance. Addressing these challenges necessitates the development of robust preprocessing strategies capable of adapting to diverse environmental conditions.\\
-While temporal-based techniques exhibited substantial improvements in detection accuracy, the impact of the HSV transformation on model outcomes was relatively minimal. This observation suggests that color space transformations may have limited utility in certain insect detection scenarios, highlighting the need for careful consideration of preprocessing techniques based on the specific characteristics of the input data.\\
+While temporal-based techniques exhibited substantial improvements in detection accuracy, the impact of the HSV transformation on model outcomes was relatively minimal. This observation suggests that color space transformations may have limited utility in certain insect detection scenarios, highlighting the need for careful consideration of preprocessing techniques based on the specific characteristics of the input data. However, the tested combinations of preprocessings were able to detect insects in DVS streams (see Figure \ref{fig:labelVsPred}).\\
 Our investigation into the effects of incorporating RGB background subtraction as supplementary information yielded intriguing insights. Even though this preprocessing step didn't seem to improve the results of our tests, more research is needed to fully understand how it might have affected the results. Future research efforts should explore alternative approaches to leveraging RGB information effectively in insect detection tasks, considering its potential significance in other contexts.\\
 In conclusion, our study contributes to the growing body of research on insect detection by showcasing the effectiveness of preprocessing techniques in enhancing detection accuracy in challenging environments.
 
@@ -788,58 +798,52 @@ Thus, while our study provides valuable insights into the potential of machine l
 Utilizing the same YOLO version and configuration throughout experiments is imperative for ensuring consistency and comparability. We employed both YOLO versions 7 and 8 to facilitate this objective. While most experiments were conducted within a three-channel environment, further exploration into the impact of additional RGB input on the fourth channel is warranted. Detailed testing in this regard could provide deeper insights into the implications of utilizing the alpha channel as a YOLO input channel. Experiment 10, which combines DVS results with RGB results, allocated only one channel for the RGB stream. However, three-channel approaches exist within the RGB domain. One potential solution could involve employing leave-one-out cross-validation, thereby disregarding two of the six input bands from DVS and RGB for the experiment. Default hyperparameters were utilized in our experiments. Maximizing the hyperparameter space could potentially enhance results further. The choice of a qualitative metric for selecting a $fs$ value for temporal filtering was employed in our experiments. Adopting a more quantitative setup, such as comparing detection metrics for different $fs$ values in preprocessing, could validate the quality of this choice. The field of computer vision offers numerous other preprocessing possibilities beyond those explored in our experiments. Non-AI-based object detection processes, in particular, could be investigated for their efficacy in preprocessing. Low batch sizes have not been extensively studied in object detection problems \cite{Peng_2018_CVPR}. Exploring the influence of different batch sizes on results could shed light on their impact and potential for improving generalization.
 \section{Conclusion}
 
+In this study, we have delved into the feasibility of detecting minuscule insects within cluttered environments using RGB and DVS-event stream images. The findings of our research not only affirm the viability of such detection but also shed light on the intricate interplay between preprocessing methodologies and detection efficacy in complex environments. \\
+In summary, our study makes a valuable contribution to the expanding field of insect detection by demonstrating the efficacy of preprocessing techniques in improving detection accuracy, particularly in challenging environments. However, it is essential to acknowledge several limitations, including the relatively small dataset size, potential biases in manual labeling, and concerns about the suitability of single-stage CNN architectures for detecting small objects such as insects. To address these limitations and advance the robustness and applicability of insect monitoring technologies in real-world settings, further efforts are needed in refined dataset collection, model development, and exploration of alternative preprocessing methods. Future research endeavors should investigate additional preprocessing approaches, and conduct thorough evaluations of hyperparameters to drive progress towards more effective insect monitoring solutions.
 \begin{acks}
   Calculations (or parts of them) for this publication were performed on the HPC cluster PALMA II of the University of Münster, subsidised by the DFG (INST 211/667-1).
 \end{acks}
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{sample-base}
-\pagebreak
 %%
 %% If your work has an appendix, this is the place to put it.
 %\appendix
 \appendix
 
-\section{Individual reports}
-- Research
-    - Evaluation metrics
-    - Yolo version differences
-    - Preprocessings
-    - Cross-validations
-    - Compare cross-validations
-- Implementation
-    - Labelbox to Yolo Format
-        - Video to frame
-        - JSON to txt labels
-        - Splitting dataset between val and train
-    - Preprocessing
-        - Framework for utilizing preprocessings on all videos
-            - Preprocess all channels of a image ombined
-            - Fine grained processing of only selected input channels, pushed to explicit output channells
-        - Implement different preprocessings.
-            - (Hier Liste mit allen PP einfügen [auch wenn nicht genutzt mMn])
-        - Multithreading of preprocessing videos and building datasets
-        - Calls to APIs of different YOLO versions to use their train functions
-        - Init a cross validation, by defining scripts for each cross-validation step, which than can be executed on HPC-Cluster.
-        - Submit the scripts on correct partitions automatically and introducing logical dependencies.
-        - Debugging yolov7
-        - Undistort and transform pixels, for mapping RGB stream to DVS stream.
-        - Infrastructure for defining inputs in RGBA experiments.
-        - Evalutae the results
-            - Summarize best epochs for each cross-validation in csv files
-            - Visualize results
-            - normalize result reporting of v7 and v8 of yolo.
-            - Utilize testing utilities for compare cross-validations
-- Project Managment
-    - Define data structruing
-    - Listing project steps
-    - Documentation
-- Monitoring PALMA processes
-    - Monitor if the runs work as expected
-    - Fine tune hardware usages, for better overall utilzation of HPC hardware.
-\subsection{Fred}
-\subsection{Jakob}
+\section{Individual contributions}
+\textit{Disclaimer:} The following responsibilities are outlined based on the collaborative nature of our project. Throughout all phases, close cooperation was maintained between team members. Tasks were distributed with one individual taking primary responsibility for specific topics, while the other provided support and assistance in their development. The subsequent list details the individual responsibilities of each team member.  
 
+\subsection{Fred}
+% - Research
+%     - Evaluation metrics
+%     - Yolo version differences
+%     - Preprocessings
+% - Implementation    
+%     - Preprocessing
+%         - Framework for utilizing preprocessings on all videos
+%             - Preprocess all channels of a image ombined
+%             - Fine grained processing of only selected input channels, pushed to explicit output channells
+%         - Implement different preprocessings.
+%             - (Hier Liste mit allen PP einfügen [auch wenn nicht genutzt mMn])
+%         - Calls to APIs of different YOLO versions to use their train functions
+%         - Undistort and transform pixels, for mapping RGB stream to DVS stream.
+%         - Infrastructure for defining inputs in RGBA experiments.
+% - Project Managment
+%     - Define data structuring
+%     - Listing project steps
+%     - Temporal planning of conducted experiments 
+%     - Documentation
+
+During the research phase, I focused on several important aspects for the project's success. I delved into different evaluation metrics suitable for assessing insect detection performance, such as precision, recall, F1 score. I looked into version differences of YOLOv7 and YOLOv8 to understand each data structure and parameters.
+My involvement in implementation spanned various tasks. One contribution was the development of preprocessing pipelines aimed at facilitating the application of different preprocessing techniques to our image data. This involved implementing mechanisms to apply preprocessings uniformly across all video streams, ensuring consistency and reproducibility in our experiments. I also put a lot of effort in implementing various preprocessing techniques, such as optical flow using Farneback method, morphological transformations, contrast enhancements, temporal filtering and background subtraction.
+I've contributed to the transformation from RGB to DVS streams allowing for a precise bounding box location in the RGB streams.
+Within the preprocessing pipeline, I implemented workflows for processing of input channels, allowing for selective application of preprocessings to specific channels.
+In terms of project management, I defined the structure of our data and outlined clear steps for project progression. This included establishing robust data structuring practices to ensure consistency and ease of access throughout the project lifecycle. I also set up a project board to schedule tasks effectively to optimize workflow efficiency.
+Documentation was another area where I contributed. I took charge of documenting various steps of our research and implementation processes, ensuring that insights, methodologies, and results were comprehensively recorded for future reference and report writing.
+
+\subsection{Jakob}
+During the research phase, my tasks involve thoroughly exploring various methodologies relevant to the project objectives. This includes studying existing literature, exploring state-of-the-art techniques, and analyzing previous research findings in the field. I also conduct comprehensive experimentation and validation procedures, employing cross-validation techniques to rigorously test the robustness and generalization capabilities of different models or algorithms. In the implementation stage, my responsibilities extend to the practical execution of tasks necessary for achieving project goals. For instance, when converting labels from Labelbox to YOLO format, I carefully design and implement algorithms or scripts to extract frames from video data. This involves considering video formats, frame rates, and quality to ensure accurate frame extraction. Additionally, I develop algorithms to convert label annotations from JSON format to the specific text format required by the YOLO model. Partitioning the dataset into validation and training sets requires thoughtful consideration of data distribution, ensuring that both sets are representative of the overall dataset. This involves techniques such as stratified sampling or random sampling, depending on the nature of the data and the objectives of the project. Moreover, I implement strategies to handle imbalanced datasets, ensuring fair representation of all classes during training and evaluation. In terms of multithreading techniques for video preprocessing and dataset construction, my tasks include designing and implementing efficient parallel processing algorithms. This involves breaking down preprocessing tasks into smaller, independent units of work that can be executed concurrently across multiple threads or processes. By leveraging the computational resources available on the system, I aim to minimize processing time and improve overall efficiency. When initiating cross-validation, I plan and script each step of the validation pipeline meticulously. This includes tasks such as data preprocessing, model training, evaluation, and result analysis. Automation plays a crucial role in streamlining this process, ensuring consistent and reproducible results across different cross-validation folds or experiments. Throughout the project, I continuously monitor the execution of PALMA processes to ensure they are functioning as expected. This involves real-time monitoring of system performance metrics, identifying bottlenecks or issues, and implementing corrective measures as needed. Additionally, I optimize hardware usage to maximize resource utilization on the HPC cluster, enhancing throughput and efficiency while minimizing costs.
 % Define a macro to escape underscores
 \newcommand{\escapeunderscore}[1]{%
     \StrSubstitute{#1}{_}{\string_}%
@@ -867,7 +871,7 @@ Utilizing the same YOLO version and configuration throughout experiments is impe
        \escapeunderscoreandsubstring{\csvcolxvi} & \csvcolii & \csvcolvi & \csvcolvii & \csvcolviii & \csvcolix & \csvcolx & \csvcolxi & \csvcolxii \\
         }
     \end{longtable*}
-     \caption{Cross-validation results of experiment #2. For each validation split the epoch with best fitness and the respective metrics and validation loss is listed.}
+     \caption{Cross-validation results of Experiment #2. For each validation split the epoch with best fitness and the respective metrics and validation loss is listed.}
        
     \end{table}
 }
@@ -890,7 +894,7 @@ Utilizing the same YOLO version and configuration throughout experiments is impe
        \escapeunderscoreandsubstring{\csvcolxxiii} & \csvcoliii & \removequotes{\csvcolxi} & \removequotes{\csvcolxii} & \removequotes{\csvcolxiii} & \removequotes{\csvcolxiv} & \removequotes{\csvcolxvi} & \removequotes{\csvcolxviii} & \removequotes{\csvcolxvii} \\
         }
     \end{longtable*}
-     \caption{Cross-validation results of experiment #2. For each validation split the epoch with best fitness and the respective metrics and validation loss is listed.}
+     \caption{Cross-validation results of Experiment #2. For each validation split the epoch with best fitness and the respective metrics and validation loss is listed.}
        
     \end{table}
 }
